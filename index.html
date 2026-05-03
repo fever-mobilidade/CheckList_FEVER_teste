@@ -26,9 +26,22 @@
         .check-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
         .check-table th, .check-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         
-        /* Estilos da seção de fotos e referências */
+        /* Estilos da seção de fotos e referências opacas */
         .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; }
-        .ref-img { width: 100%; height: auto; max-height: 180px; object-fit: contain; border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; display: block; background: #eee; }
+        .ref-img { 
+            width: 100%; 
+            height: auto; 
+            max-height: 180px; 
+            object-fit: contain; 
+            border: 2px dashed #00ffcc; 
+            border-radius: 8px; 
+            margin-bottom: 10px; 
+            display: block; 
+            background: #eee;
+            opacity: 0.3; /* Transparência para não confundir o usuário */
+            filter: grayscale(100%); /* Preto e branco para diferenciar da foto real */
+            transition: 0.3s;
+        }
         .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 2px solid #000; border-radius: 4px; }
         
         canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; cursor: crosshair; touch-action: none; }
@@ -177,15 +190,15 @@
     const itens = ["Pintura e Lataria", "Pneus", "Rodas", "Parabrisa e palhetas", "Retrovisores", "Documentação", "Chave do veiculo e baú", "Kit de ferramentas", "Adesivos e Etiquetas", "Painel e Cabine", "Estação de Recarga portátil", "Luzes externas", "Luzes internas", "Ar-condicionado", "Vidros e travas elétricas", "Kit Reparo do Pneu", "Central Multimidia"];
     itens.forEach(it => { document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; });
 
-    // Configuração das Fotos com Imagens de Referência
+    // Configuração das Fotos com Imagens de Referência Opacas
     const fLabels = ["Foto de Frente", "Foto Lateral Direita (motorista)", "Foto Traseira", "Foto Lateral Esquerda (passageiro)", "Foto da Placa", "Foto do Chassi", "Foto do Painel/KM"];
     const fImagens = ["frente.png", "lateral_direita.png", "traseira.png", "lateral_esquerda.png", "placa.png", "chassi.png", "painel.png"];
 
     fLabels.forEach((l, i) => { 
         document.getElementById('gridFotos').innerHTML += `
             <div class="photo-item">
-                <label>${i+1}. ${l}</label>
-                <img src="img/${fImagens[i]}" class="ref-img" alt="Referência ângulo">
+                <label><strong>${i+1}. ${l}</strong></label>
+                <img id="ref${i+1}" src="img/${fImagens[i]}" class="ref-img" alt="Guia de ângulo">
                 <input type="file" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required>
                 <img id="v${i+1}" class="preview-img">
             </div>`; 
@@ -204,8 +217,13 @@
                 cv.getContext('2d').drawImage(img, 0, 0, w, h);
                 const b64 = cv.toDataURL('image/jpeg', 0.7);
                 fotos['foto'+id] = b64;
+                
                 const preview = document.getElementById('v'+id);
-                preview.src = b64; preview.style.display = 'block';
+                preview.src = b64; 
+                preview.style.display = 'block';
+                
+                // Oculta a imagem de referência após a captura da foto real
+                document.getElementById('ref'+id).style.display = 'none';
             };
             img.src = e.target.result;
         };
