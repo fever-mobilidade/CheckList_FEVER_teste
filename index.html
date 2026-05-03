@@ -4,82 +4,56 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Checklist FEVER Oficial</title>
-    <!-- Importação da fonte Fauna One para o estilo Light da logo -->
-    <link href="https://fonts.googleapis.com/css2?family=Fauna+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oxanium:wght@700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
         body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f4f4f4; color: #333; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
-        
-        /* Ajuste do Cabeçalho com a Fonte Fauna One */
-        .header { text-align: center; background: #1a1a1a; color: #fff; padding: 25px 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; border-bottom: 4px solid #00ffcc; }
-        .header h1 { 
-            margin: 0; 
-            color: #00ffcc !important; 
-            letter-spacing: 10px !important; /* Espaçamento para dar o ar "Light" e elegante */
-            font-size: 36px !important; 
-            font-family: 'Fauna One', serif !important; 
-            font-weight: 400 !important; /* Peso Light/Normal */
-            text-transform: uppercase !important;
-        }
-        .header p { margin-top: 8px; font-size: 13px; opacity: 0.8; letter-spacing: 1px; font-weight: normal; }
-
+        .header { text-align: center; background: #000; color: #fff; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; border-bottom: 4px solid #00ffcc; }
+        .header h1 { margin: 0; color: #00ffcc !important; letter-spacing: 2px !important; font-size: 30px !important; font-family: 'Oxanium', sans-serif !important; font-weight: 700 !important; text-transform: uppercase !important;}
         #step-gps { text-align: center; padding: 40px 10px; }
         #step-form { display: none; }
         #success-screen { display: none; text-align: center; padding: 40px 10px; }
-        
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
         
         .placa-container { background: #e8f4f1; padding: 15px; border-radius: 8px; border: 2px solid #00ffcc; margin-top: 10px; text-align: center; }
         .placa-input { font-size: 24px !important; font-weight: bold !important; text-align: center; letter-spacing: 3px; border: 2px solid #000 !important; background: #fff !important; text-transform: uppercase; }
-        .btn-busca { background: #000; color: #00ffcc; border: none; padding: 12px 20px; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; margin-top: 10px; width: 100%; }
+        .busca-container { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-busca { background: #000; color: #00ffcc; border: none; padding: 0 20px; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        input:read-only { background-color: #f0f0f0; color: #666; cursor: not-allowed; border: 1px solid #ddd; }
 
         .check-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
         .check-table th, .check-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
-        
         .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; }
         
-        /* Efeito de transparência de 20% conforme solicitado */
+        /* Alteração: Estilo para as imagens de modelo com 20% de opacidade */
         .ref-img { 
-            width: 100%; 
-            height: auto; 
-            max-height: 180px; 
-            object-fit: contain; 
-            border: 2px dashed #00ffcc; 
-            border-radius: 8px; 
-            margin-bottom: 10px; 
-            display: block; 
-            background: #fff;
-            opacity: 0.20 !important; 
-            filter: grayscale(100%) !important; 
-            -webkit-filter: grayscale(100%) !important;
+            width: 100%; height: auto; max-height: 180px; object-fit: contain; 
+            border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; 
+            opacity: 0.50 !important; 
+            filter: grayscale(70%); 
+            -webkit-filter: grayscale(70%) !important;
         }
         
         .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 2px solid #000; border-radius: 4px; }
         
-        /* Estilização do Termo de Responsabilidade */
+        /* Alteração: Estilo para o Termo de Responsabilidade */
         .termo-aceite { 
-            background: #fdfdfd; 
-            border: 1px solid #ddd; 
-            padding: 15px; 
-            border-radius: 4px; 
-            font-size: 13px; 
-            line-height: 1.6; 
-            margin-top: 30px; 
-            color: #444;
-            text-align: justify;
-            border-left: 5px solid #00ffcc;
+            background: #fdfdfd; border: 1px solid #ddd; padding: 15px; border-radius: 4px; 
+            font-size: 13px; line-height: 1.6; margin-top: 30px; color: #333;
+            text-align: justify; border-left: 5px solid #00ffcc;
         }
 
-        canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; cursor: crosshair; touch-action: none; margin-top: 10px; }
+        canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; cursor: crosshair; touch-action: none; }
         .btn-main { width: 100%; padding: 18px; background: #000; color: #00ffcc; border: none; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 4px; margin-top: 20px; }
         .btn-gps { background: #00ffcc; color: #000; animation: pulse 2s infinite; }
-        
+        .btn-secondary { background: #444; color: #fff; margin-top: 10px; font-size: 14px; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #msg-busca { margin-top: 8px; font-size: 13px; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -87,14 +61,11 @@
 <div id="loading"><div class="spinner"></div><p>ENVIANDO AUDITORIA...<br>Aguarde.</p></div>
 
 <div class="container">
-    <div class="header">
-        <h1>FEVER</h1>
-        <p>O FUTURO É ELETRIZANTE<br>CheckList de Recebimento do Veículo</p>
-    </div>
+    <div class="header"><h1>FEVER</h1><p>O FUTURO É ELETRIZANTE<br>CheckList de recebimento do veículo</p></div>
 
     <div id="step-gps">
         <h2>Localização do Checklist</h2>
-        <p>Clique abaixo para registrar o local exato da vistoria.</p>
+        <p>Clique abaixo para registrar o local exato.</p>
         <button type="button" id="btn-gps" class="btn-main btn-gps" onclick="pegarLocalizacao()">📍 REGISTRAR LOCALIZAÇÃO</button>
         <p id="status-gps" style="margin-top:15px; font-size:14px; font-weight: bold;"></p>
         <p id="precisao-viva" style="font-size:12px; color:#666;"></p>
@@ -103,45 +74,61 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label style="margin-top:0;">PLACA OU CHASSI (8 ÚLTIMOS) *</label>
-                <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="ABC1D23" oninput="this.value = this.value.toUpperCase()">
-                <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR VEÍCULO</button>
-                <p id="msg-busca" style="margin-top:10px; display:none; font-weight:bold;"></p>
+                <label style="margin-top:0;">DIGITE A PLACA - Se Zero digite o CHASSI (8 ultimos digitos) DO VEÍCULO *</label>
+               <div class="busca-container">
+                    <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onfocus="this.value = ''; this.placeholder = '';" onblur="if(this.value === '') { this.placeholder = 'Ex:ABC1D23' }; buscarNoBanco(this.value)">
+                    <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
+                </div>
+                <p id="msg-busca"></p>
             </div>
 
             <label>Chassi *</label>
-            <input type="text" id="chassi" required readonly placeholder="Automático">
-            <label>Modelo *</label>
-            <input type="text" id="modeloVeiculo" required readonly placeholder="Automático">
+            <input type="text" id="chassi" required readonly placeholder="Preenchimento automático">
+            
+            <label>Modelo do veículo *</label>
+            <input type="text" id="modeloVeiculo" required readonly placeholder="Preenchimento automático">
+
             <label>KM Atual *</label>
-            <input type="number" id="km" required>
+            <input type="number" id="km" required maxlength="12">
+
             <label>Empresa (Cliente) *</label>
-            <input type="text" id="empresa" required readonly placeholder="Automático">
+            <input type="text" id="empresa" required readonly placeholder="Preenchimento automático" maxlength="60">
+
+            <label>CNPJ Empresa *</label>
+            <input type="text" id="cnpj" required readonly placeholder="Preenchimento automático">
+
             <label>Nome do Usuário *</label>
             <input type="text" id="cliente" required maxlength="30">
+
             <label>Telefone *</label>
             <input type="tel" id="telefone" oninput="maskTel(this)" required maxlength="15">
-            <label>Data de Recebimento *</label>
+
+            <label>Data do recebimento do veículo *</label>
             <input type="date" id="dataRecebimento" required>
 
-            <h3>Condições do Veículo</h3>
+            <h3>Condições geral do Veículo</h3>
             <table class="check-table">
                 <thead><tr><th style="text-align:left">Item</th><th>Ok</th><th>Não Ok</th><th>N/A</th></tr></thead>
                 <tbody id="corpoTabela"></tbody>
             </table>
 
-            <h3>Fotos Obrigatórias</h3>
+            <label>Algum Dano constatado?</label>
+            <select id="dano" onchange="document.getElementById('campoObs').style.display=(this.value=='Sim'?'block':'none')">
+                <option value="Não">Não</option><option value="Sim">Sim</option>
+            </select>
+            <div id="campoObs" style="display:none; padding-top:10px;"><textarea id="desc" rows="3" placeholder="Escreva o dano aqui!"></textarea></div>
+
+            <h3>Fotos do veículo</h3>
             <div id="gridFotos"></div>
 
-            <!-- TERMO DE RESPONSABILIDADE -->
+            <!-- Alteração: Termo de Responsabilidade inserido aqui -->
             <div class="termo-aceite">
-                <strong>TERMO DE RESPONSABILIDADE:</strong> Declaro que as informações acima refletem o estado real do veículo. Esta assinatura eletrônica está vinculada aos dados de geolocalização e identificação do dispositivo móvel abaixo descritos, servindo como evidência técnica de conformidade.[cite: 1]
+                <strong>TERMO DE RESPONSABILIDADE:</strong> Declaro que as informações acima refletem o estado real do veículo. Esta assinatura eletrônica está vinculada aos dados de geolocalização e identificação do dispositivo móvel abaixo descritos, servindo como evidência técnica de conformidade.
             </div>
 
             <label>Sua Assinatura *</label>
             <canvas id="signature-pad"></canvas>
-            <button type="button" onclick="pad.clear()" style="width:100%; padding:10px; margin-top:5px; background: #eee; border: 1px solid #ccc; border-radius: 4px;">Limpar Assinatura</button>
-            
+            <button type="button" onclick="pad.clear()" style="width:100%; padding:10px; margin-top:5px;">Limpar</button>
             <button type="submit" class="btn-main">FINALIZAR E ENVIAR</button>
         </form>
     </div>
@@ -150,6 +137,7 @@
         <h1 style="font-size: 80px; color: #00ffcc; margin: 0;">✔</h1>
         <h2>Enviado com Sucesso!</h2>
         <button onclick="location.reload()" class="btn-main">NOVO CHECKLIST</button>
+        <button onclick="fecharJanela()" class="btn-main btn-secondary">FECHAR EM <span id="timer">10</span>s</button>
     </div>
 </div>
 
@@ -159,10 +147,11 @@
     const canvas = document.getElementById('signature-pad');
     let pad;
     const fotos = {};
+    let placaAtiva = "";
 
     async function buscarNoBanco(placa) {
         const pL = placa.toUpperCase().trim().replace(/\s|-/g, "");
-        if (pL.length < 7) return;
+        if (pL.length < 7) return alert("Digite a placa completa.");
         const msg = document.getElementById('msg-busca');
         msg.innerText = "🔍 Buscando..."; msg.style.color = "blue"; msg.style.display = "block";
         const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRKYiYPdmLaEyTMG_lGfXzrZKA4zIn3e3UyynAP1_9GdMy9En-2dEmum6ubX5kLZcTa_E_kQn2aSXtH/pub?gid=128063943&single=true&output=csv`;
@@ -172,15 +161,21 @@
             const linhas = txt.split('\n').map(l => l.split(',').map(c => c.replace(/"/g, "").trim()));
             const v = linhas.find(cols => cols[0].replace(/\s|-/g, "").toUpperCase() === pL);
             if (v) {
+                placaAtiva = pL;
                 document.getElementById('chassi').value = v[1]; 
                 document.getElementById('modeloVeiculo').value = v[2];
                 document.getElementById('empresa').value = v[3]; 
+                document.getElementById('cnpj').value = v[4];
                 msg.innerText = "✅ Veículo Localizado!"; msg.style.color = "green";
             } else { 
-                msg.innerText = "❌ Veículo não encontrado!"; msg.style.color = "red"; 
-                ['chassi', 'modeloVeiculo', 'empresa'].forEach(id => document.getElementById(id).value = ""); 
+                msg.innerText = "❌ Placa não encontrada!"; msg.style.color = "red"; 
+                placaAtiva = ""; limparCamposAuto(); 
             }
-        } catch (e) { msg.innerText = "⚠️ Erro de conexão."; }
+        } catch (e) { msg.innerText = "⚠️ Erro ao conectar ao banco."; }
+    }
+
+    function limparCamposAuto() {
+        ['chassi', 'modeloVeiculo', 'empresa', 'cnpj'].forEach(id => document.getElementById(id).value = "");
     }
 
     function pegarLocalizacao() {
@@ -189,7 +184,7 @@
         btn.disabled = true; btn.innerText = "CALIBRANDO GPS...";
         watchId = navigator.geolocation.watchPosition((p) => {
             const acc = p.coords.accuracy;
-            precisaoTxt.innerText = `Precisão: ${acc.toFixed(1)} metros`;
+            precisaoTxt.innerText = `Margem de erro: ${acc.toFixed(1)} metros`;
             if (acc <= 65) {
                 userLoc = `Lat: ${p.coords.latitude} Lon: ${p.coords.longitude} (Erro: ${acc.toFixed(1)}m)`;
                 navigator.geolocation.clearWatch(watchId);
@@ -197,20 +192,21 @@
                 document.getElementById('step-form').style.display = 'block';
                 if (!pad) { pad = new SignaturePad(canvas); resizeCanvas(); }
             }
-        }, (e) => { alert("Ative o GPS para continuar."); btn.disabled = false; }, { enableHighAccuracy: true });
+        }, (e) => { alert("Ative o GPS."); btn.disabled = false; }, { enableHighAccuracy: true });
     }
 
     const itens = ["Pintura e Lataria", "Pneus", "Rodas", "Parabrisa e palhetas", "Retrovisores", "Documentação", "Chave do veiculo e baú", "Kit de ferramentas", "Adesivos e Etiquetas", "Painel e Cabine", "Estação de Recarga portátil", "Luzes externas", "Luzes internas", "Ar-condicionado", "Vidros e travas elétricas", "Kit Reparo do Pneu", "Central Multimidia"];
     itens.forEach(it => { document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; });
 
-    const fLabels = ["Foto de Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto da Placa", "Foto do Chassi", "Foto do Painel/KM"];
+    const fLabels = ["Foto de Frente", "Foto Lateral Direita (motorista)", "Foto Traseira", "Foto Lateral Esquerda (passageiro)", "Foto da Placa", "Foto do Chassi", "Foto do Painel/KM"];
     const fImagens = ["frente.png", "lateral_direita.png", "traseira.png", "lateral_esquerda.png", "placa.png", "chassi.png", "painel.png"];
 
+    // Alteração: Loop para fotos incluindo a imagem de modelo (guia)
     fLabels.forEach((l, i) => { 
         document.getElementById('gridFotos').innerHTML += `
             <div class="photo-item">
-                <label><strong>${i+1}. ${l}</strong></label>
-                <img id="ref${i+1}" src="img/${fImagens[i]}" class="ref-img" alt="Guia">
+                <label>${l}</label>
+                <img id="ref${i+1}" src="img/${fImagens[i]}" class="ref-img" alt="Modelo">
                 <input type="file" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required>
                 <img id="v${i+1}" class="preview-img">
             </div>`; 
@@ -231,7 +227,7 @@
                 fotos['foto'+id] = b64;
                 const preview = document.getElementById('v'+id);
                 preview.src = b64; preview.style.display = 'block';
-                document.getElementById('ref'+id).style.display = 'none';
+                document.getElementById('ref'+id).style.display = 'none'; // Esconde o modelo após a foto
             };
             img.src = e.target.result;
         };
@@ -240,26 +236,26 @@
 
     function maskTel(i) { let v = i.value.replace(/\D/g, ""); v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); v = v.replace(/(\d)(\d{4})$/, "$1-$2"); i.value = v; }
     function resizeCanvas() { const ratio = Math.max(window.devicePixelRatio || 1, 1); canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio; canvas.getContext("2d").scale(ratio, ratio); }
+    function fecharJanela() { window.close(); }
+    function iniciarTimer() { let seg = 10; setInterval(() => { seg--; if(document.getElementById('timer')) document.getElementById('timer').innerText = seg; if(seg<=0) fecharJanela(); }, 1000); }
 
     document.getElementById("formFever").onsubmit = async (e) => {
         e.preventDefault();
-        if(pad.isEmpty()) return alert("Assinatura obrigatória.");
+        if(placaAtiva === "") return alert("Você precisa BUSCAR e localizar uma placa válida antes de enviar!");
+        if(pad.isEmpty()) return alert("Assinatura obrigatória!");
         document.getElementById("loading").style.display = "flex";
-        
         const checks = {};
         itens.forEach(it => { const el = document.querySelector(`input[name="${it}"]:checked`); checks[it] = el ? el.value : "N/A"; });
-        
-        const payload = { ...fotos, checklistItems: checks, placa: document.getElementById("placa").value, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cliente: document.getElementById("cliente").value, telefone: document.getElementById("telefone").value, dataRecebimento: document.getElementById("dataRecebimento").value, assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
-        
+        const payload = { ...fotos, checklistItems: checks, placa: document.getElementById("placa").value, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cnpj: document.getElementById("cnpj").value, cliente: document.getElementById("cliente").value, telefone: document.getElementById("telefone").value, dataRecebimento: document.getElementById("dataRecebimento").value, dano: document.getElementById("dano").value, desc: document.getElementById("desc").value || "Sem obs", assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
         try {
             const scriptURL = "https://script.google.com/macros/s/AKfycbzQXmlK5hOW8j479lBCBQr75uVW_YhwVo-3HoA33solJYFjRupXxvV2dv974KW8274chQ/exec";
             await fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             document.getElementById("loading").style.display = "none";
             document.getElementById("step-form").style.display = "none";
             document.getElementById("success-screen").style.display = "block";
-        } catch (err) { alert("Erro ao enviar."); document.getElementById("loading").style.display = "none"; }
+            iniciarTimer();
+        } catch (err) { alert("Erro no envio."); document.getElementById("loading").style.display = "none"; }
     };
 </script>
 </body>
 </html>
-```[cite: 1]
