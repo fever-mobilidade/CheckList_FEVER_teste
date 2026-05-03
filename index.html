@@ -8,11 +8,12 @@
     <style>
         @font-face {
         font-family: 'Fauna Pro';
-        src: url('Font/Fauna-Pro-Regular.ttf') format('truetype'); 
-        /* Nota: Verifique se a extensão é .ttf ou .otf e se o nome está idêntico ao arquivo no GitHub */
+        /* Tente o caminho relativo primeiro, garantindo a pasta correta */
+        src: url('./Font/Fauna-Pro-Regular.ttf') format('truetype'); 
         font-weight: normal;
         font-style: normal;
-        }
+        font-display: swap; /* Ajuda a carregar o texto antes da fonte */
+         }
         body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f4f4f4; color: #333; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 10px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         .header { text-align: center; background: #000; color: #fff; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; border-bottom: 4px solid #00ffcc; }
