@@ -32,7 +32,7 @@
             width: 100%; height: auto; max-height: 180px; object-fit: contain; 
             border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; 
             opacity: 0.60 !important; 
-            filter: grayscale(70%); 
+            filter: grayscale(70%) !important; 
             -webkit-filter: grayscale(70%) !important;
         }
         
@@ -74,7 +74,7 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label style="margin-top:0;">DIGITE A PLACA - Se Zero digite o CHASSI (8 ultimos digitos) DO VEÍCULO *</label>
+                <label style="margin-top:0;">DIGITE A PLACA - Se Zero KM digite o CHASSI (8 ultimos digitos) DO VEÍCULO *</label>
                <div class="busca-container">
                     <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onfocus="this.value = ''; this.placeholder = '';" onblur="if(this.value === '') { this.placeholder = 'Ex:ABC1D23' }; buscarNoBanco(this.value)">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
@@ -198,8 +198,8 @@
     const itens = ["Pintura e Lataria", "Pneus", "Rodas", "Parabrisa e palhetas", "Retrovisores", "Documentação", "Chave do veiculo e baú", "Kit de ferramentas", "Adesivos e Etiquetas", "Painel e Cabine", "Estação de Recarga portátil", "Luzes externas", "Luzes internas", "Ar-condicionado", "Vidros e travas elétricas", "Kit Reparo do Pneu", "Central Multimidia"];
     itens.forEach(it => { document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; });
 
-    const fLabels = ["Foto de Frente", "Foto Lateral Direita (motorista)", "Foto Traseira", "Foto Lateral Esquerda (passageiro)", "Foto da Placa", "Foto do Chassi", "Foto do Painel/KM"];
-    const fImagens = ["frente.png", "lateral_direita.png", "traseira.png", "lateral_esquerda.png", "placa.png", "chassi.png", "painel.png"];
+    const fLabels = ["Foto de Frente", "Foto Lateral Esquerda (motorista)", "Foto Traseira", "Foto Lateral Direita (passageiro)", "Foto da Placa", "Foto do Chassi", "Foto do Painel/KM"];
+    const fImagens = ["frente.png", "lateral_esquerda.png", "traseira.png", "lateral_direita.png", "placa.png", "chassi.png", "painel.png"];
 
     // Alteração: Loop para fotos incluindo a imagem de modelo (guia)
     fLabels.forEach((l, i) => { 
