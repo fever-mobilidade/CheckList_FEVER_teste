@@ -9,12 +9,13 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
         @font-face {
-            font-family: 'fauna-thin';
-            src: url('./Font/fauna-thin.ttf') format('truetype'); 
-            font-weight: normal;
-            font-style: normal;
-            font-display: swap;
-        }
+        font-family: 'fauna-thin';
+        /* Tente o caminho relativo primeiro, garantindo a pasta correta */
+        src: url('./Font/fauna-thin.ttf') format('truetype'); 
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap; /* Ajuda a carregar o texto antes da fonte */
+         }
         body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f4f4f4; color: #333; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         .header { text-align: center; background: #000; color: #fff; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; border-bottom: 4px solid #00ffcc; }
@@ -32,6 +33,7 @@
         .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; }
         .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 2px solid #000; border-radius: 4px; }
         
+        /* CSS para as imagens de referência */
         .ref-container { margin-bottom: 12px; background: #eee; padding: 8px; border-radius: 5px; border: 1px dashed #bbb; }
         .ref-img { width: 100%; max-width: 180px; height: auto; border-radius: 4px; border: 1px solid #ccc; display: block; margin: 5px auto; }
         
@@ -145,9 +147,9 @@
     const canvas = document.getElementById('signature-pad'); const fotos = {}; let placaAtiva = "";
     let fotoAvariaBase64 = ""; 
 
+    // Configuração das Imagens de Referência
     const PATH_IMG = "./img/";
 
-    // Mapeamento Segregado por Marca para Segurança Total[cite: 1]
     const mapeamentoPorMarca = {
         "NEXTEM": {
             "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg",
@@ -192,20 +194,22 @@
 
     function limparCamposAuto() { ['chassi', 'modeloVeiculo', 'empresa', 'cnpj'].forEach(id => document.getElementById(id).value = ""); document.getElementById('gridFotos').innerHTML = '<p style="color: red;">Placa inválida.</p>'; }
 
-    function gerarCamposFotos() {[cite: 1]
+    function gerarCamposFotos() {
         const modFull = document.getElementById('modeloVeiculo').value.toUpperCase();
         const grid = document.getElementById('gridFotos'); grid.innerHTML = "";
         
         let marca = modFull.includes("NEXTEM") ? "NEXTEM" : "RAP";
-        let prefixo = marca.toLowerCase() + "_";[cite: 1]
+        let prefixo = marca.toLowerCase() + "_";
         let listaEtiquetas = (marca === "NEXTEM") ? fotosNextem : fotosRap;
         
         listaEtiquetas.forEach((label, i) => {
-            const nomeArquivo = mapeamentoPorMarca[marca][label] || "";[cite: 1]
-            const caminhoRef = nomeArquivo ? PATH_IMG + prefixo + nomeArquivo : "";[cite: 1]
+            const nomeArquivo = mapeamentoPorMarca[marca][label] || "";
+            const caminhoRef = nomeArquivo ? PATH_IMG + prefixo + nomeArquivo : "";
+            
+            // HTML da Referência
             const htmlRef = caminhoRef ? `
                 <div class="ref-container">
-                    <span style="font-size:10px; font-weight:bold;">GUIA ${marca}:</span>
+                    <span style="font-size:10px; font-weight:bold;">REFERÊNCIA ${marca}:</span>
                     <img src="${caminhoRef}" class="ref-img" onerror="this.parentElement.style.display='none'">
                 </div>` : "";
 
