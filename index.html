@@ -9,44 +9,42 @@
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
         @font-face {
-            font-family: 'fauna-thin';
-            src: url('./Font/fauna-thin.ttf') format('truetype'); 
-            font-weight: normal; font-style: normal; font-display: swap;
-        }
+        font-family: 'fauna-thin';
+        src: url('./Font/fauna-thin.ttf') format('truetype'); 
+        font-weight: normal;
+        font-style: normal;
+        font-display: swap;
+         }
         body { font-family: Arial, sans-serif; margin: 0; padding: 15px; background: #f4f4f4; color: #333; }
         .container { max-width: 600px; margin: auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 0 10px rgba(0,0,0,0.1); }
         .header { text-align: center; background: #000; color: #fff; padding: 20px; border-radius: 8px 8px 0 0; margin: -20px -20px 20px -20px; border-bottom: 4px solid #00ffcc; }
         .header h1 { margin: 0; color: #00ffcc !important; letter-spacing: 2px !important; font-size: 30px !important; font-family: 'fauna-thin', sans-serif !important; font-weight: 700 !important; text-transform: uppercase !important;}
-        
-        /* Estilos dos containers de fotos */
-        .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; }
-        .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 2px solid #000; border-radius: 4px; }
-        
-        /* AJUSTE: Imagem de referência com 50% de transparência */
-        .ref-container { margin-bottom: 12px; background: #eee; padding: 8px; border-radius: 5px; border: 1px dashed #bbb; }
-        .ref-img { 
-            width: 100%; 
-            max-width: 180px; 
-            height: auto; 
-            border-radius: 4px; 
-            border: 1px solid #ccc; 
-            display: block; 
-            margin: 5px auto;
-            opacity: 0.5; /* Define a transparência em 50%  */
-            filter: grayscale(30%); /* Opcional: deixa levemente cinza para diferenciar mais */
-        }
-        
-        /* Restante dos estilos originais */
         #step-gps { text-align: center; padding: 40px 10px; }
         #step-form { display: none; }
+        #success-screen { display: none; text-align: center; padding: 40px 10px; }
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
         input, select, textarea { width: 100%; padding: 12px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box; font-size: 16px; }
         .placa-container { background: #e8f4f1; padding: 15px; border-radius: 8px; border: 2px solid #00ffcc; margin-top: 10px; text-align: center; }
         .placa-input { font-size: 24px !important; font-weight: bold !important; text-align: center; letter-spacing: 3px; border: 2px solid #000 !important; background: #fff !important; }
+        .busca-container { display: flex; gap: 8px; margin-top: 10px; }
+        .btn-busca { background: #000; color: #00ffcc; border: none; padding: 0 20px; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        input:read-only { background-color: #f0f0f0; color: #666; cursor: not-allowed; border: 1px solid #ddd; }
+        .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; }
+        .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 2px solid #000; border-radius: 4px; }
+        
+        /* CSS PARA FOTOS DE REFERÊNCIA COM TRANSPARÊNCIA */
+        .ref-container { margin-bottom: 12px; background: #eee; padding: 8px; border-radius: 5px; border: 1px dashed #bbb; }
+        .ref-img { width: 100%; max-width: 180px; height: auto; border-radius: 4px; border: 1px solid #ccc; display: block; margin: 5px auto; opacity: 0.5; }
+        
+        canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; cursor: crosshair; touch-action: none; }
         .btn-main { width: 100%; padding: 18px; background: #000; color: #00ffcc; border: none; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 4px; margin-top: 20px; }
-        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; }
+        .btn-gps { background: #00ffcc; color: #000; animation: pulse 2s infinite; }
+        .btn-secondary { background: #444; color: #fff; margin-top: 10px; font-size: 14px; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
+        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        #msg-busca { margin-top: 8px; font-size: 13px; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
@@ -62,60 +60,95 @@
     <div id="step-gps">
         <h2>Localização do Checklist</h2>
         <p>Clique abaixo para registrar o local exato.</p>
-        <button type="button" class="btn-main" onclick="pegarLocalizacao()">📍 REGISTRAR LOCALIZAÇÃO</button>
+        <button type="button" id="btn-gps" class="btn-main btn-gps" onclick="pegarLocalizacao()">📍 REGISTRAR LOCALIZAÇÃO</button>
         <p id="status-gps" style="margin-top:15px; font-size:14px; font-weight: bold;"></p>
+        <p id="precisao-viva" style="font-size:12px; color:#666;"></p>
     </div>
 
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label>DIGITE A PLACA DO VEÍCULO *</label>
-                <input type="text" id="placa" class="placa-input" required maxlength="8" onblur="buscarNoBanco(this.value)">
+                <label style="margin-top:0;">DIGITE A PLACA DO VEÍCULO *</label>
+                <div class="busca-container">
+                    <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onfocus="this.value = ''; this.placeholder = '';" onblur="if(this.value === '') { this.placeholder = 'Ex:ABC1D23' }; buscarNoBanco(this.value)">
+                    <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
+                </div>
                 <p id="msg-busca"></p>
             </div>
 
-            <input type="hidden" id="chassi">
-            <input type="hidden" id="modeloVeiculo">
-            <input type="hidden" id="empresa">
-            <input type="hidden" id="cnpj">
+            <label>CHASSI do Veículo</label>
+            <input type="text" id="chassi" required readonly placeholder="Automático">
+            
+            <label>Modelo do veículo</label>
+            <input type="text" id="modeloVeiculo" required readonly placeholder="Automático">
 
             <label>KM Atual *</label>
             <input type="number" id="km" required>
             
+            <label>Empresa (Cliente)</label>
+            <input type="text" id="empresa" required readonly placeholder="Automático">
+            
+            <label>CNPJ Empresa</label>
+            <input type="text" id="cnpj" required readonly placeholder="Automático">
+            
             <label>Nome do Usuário *</label><input type="text" id="cliente" required>
             <label>Telefone *</label><input type="tel" id="telefone" oninput="maskTel(this)" required>
 
-            <label>Algum Dano?</label>
+            <label>Algum Dano constatado?</label>
             <select id="dano" onchange="document.getElementById('campoObs').style.display=(this.value=='Sim'?'block':'none')">
                 <option value="Não">Não</option>
                 <option value="Sim">Sim</option>
             </select>
 
-            <div id="campoObs" style="display:none;">
-                <label>Descreva o dano</label>
-                <textarea id="desc" rows="3"></textarea>
+            <div id="campoObs" style="display:none; background: #fff1f1; padding: 15px; border-radius: 8px; border: 1px solid #ffcccc; margin-top: 10px;">
+                <label style="margin-top:0; color: #d32f2f;">Descreva o dano *</label>
+                <textarea id="desc" rows="3" placeholder="Detalhes do dano..."></textarea>
+                
+                <label style="color: #d32f2f;">Foto da Avaria *</label>
+                <div class="photo-item" style="margin-bottom:0; background: white;">
+                    <input type="file" id="inputFotoDano" accept="image/*" capture="camera" onchange="compactarFotoDano(this)">
+                    <img id="previewDano" class="preview-img">
+                </div>
             </div>
 
             <h3>Fotos do veículo</h3>
             <div id="gridFotos">
-                <p style="text-align: center;">Busque a placa primeiro.</p>
+                <p style="color: #666; font-size: 12px; text-align: center; border: 1px dashed #ccc; padding: 10px;">Busque a placa acima.</p>
             </div>
 
-            <canvas id="signature-pad" style="border:1px solid #000; width:100%; height:200px; margin-top:20px;"></canvas>
-            <button type="button" onclick="pad.clear()">Limpar Assinatura</button>
+            <div style="background: #f9f9f9; border: 1px solid #ccc; padding: 15px; border-radius: 4px; margin-top: 20px;">
+                <p style="font-size: 13px; color: #444; text-align: justify;">
+                    "Declaro que as informações prestadas e as fotos anexadas refletem o estado real do veículo. Esta assinatura está vinculada aos dados de geolocalização e identificação do dispositivo, servindo como evidência técnica de conformidade. Estou ciente de que a falsificação de dados acarretará responsabilidade civil e administrativa, conforme as políticas da FEVER Fleet."
+                </p>
+                <label style="display: flex; align-items: center;">
+                    <input type="checkbox" id="aceiteTermos" required style="width: 20px; height: 20px; margin-right: 10px;">
+                    <span style="font-size: 14px; font-weight: bold;">CONCORDO COM A DECLARAÇÃO *</span>
+                </label>
+            </div>
+
+            <h3>Assinatura *</h3>
+            <canvas id="signature-pad"></canvas>
+            <button type="button" onclick="pad.clear()" style="width:100%; padding:10px; margin-top:5px;">Limpar</button>
             <button type="submit" class="btn-main">FINALIZAR E ENVIAR</button>
         </form>
+    </div>
+
+    <div id="success-screen">
+        <h1 style="font-size: 80px; color: #00ffcc; margin: 0;">✔</h1>
+        <h2>Sucesso!</h2>
+        <button onclick="location.reload()" class="btn-main">NOVO</button>
+        <button onclick="fecharJanela()" class="btn-main btn-secondary">FECHAR (<span id="timer">10</span>s)</button>
     </div>
 </div>
 
 <script>
-    let userLoc = ""; let pad; const fotos = {}; let placaAtiva = "";
+    let userLoc = "Não capturado"; let watchId = null; let pad;
+    const canvas = document.getElementById('signature-pad'); const fotos = {}; let placaAtiva = "";
+    let fotoAvariaBase64 = ""; 
+
     const PATH_IMG = "./img/";
 
-    // Listas de etiquetas conforme a marca 
-    const fotosNextem = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Cabine interna", "Foto Interna do Baú", "Foto Capô interna", "Foto Roda/Pneu (DIANTEIRO) Motorista", "Foto Roda/Pneu (DIANTEIRO) Passageiro", "Foto Roda/Pneu (TRASEIRO) Motorista", "Foto Roda/Pneu (TRASEIRO) Passageiro", "Foto Estação de Recarga portatil", "Foto Frasco Reparador de Pneu"];
-    const fotosRap = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Banco (assento)", "Foto Interna do Baú", "Foto Roda/Pneu (DIANTEIRO)", "Foto Roda/Pneu (Traseiro Direito)", "Foto Roda/Pneu (Traseiro Esquerdo)", "Foto Estação de Recarga", "Foto Kit Ferramentas"];
-
+    // MAPEAMENTO POR MARCA
     const mapeamentoPorMarca = {
         "NEXTEM": {
             "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg",
@@ -136,20 +169,29 @@
         }
     };
 
+    const fotosNextem = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Cabine interna", "Foto Interna do Baú", "Foto Capô interna", "Foto Roda/Pneu (DIANTEIRO) Motorista", "Foto Roda/Pneu (DIANTEIRO) Passageiro", "Foto Roda/Pneu (TRASEIRO) Motorista", "Foto Roda/Pneu (TRASEIRO) Passageiro", "Foto Estação de Recarga portatil", "Foto Frasco Reparador de Pneu"];
+    const fotosRap = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Banco (assento)", "Foto Interna do Baú", "Foto Roda/Pneu (DIANTEIRO)", "Foto Roda/Pneu (Traseiro Direito)", "Foto Roda/Pneu (Traseiro Esquerdo)", "Foto Estação de Recarga", "Foto Kit Ferramentas"];
+
     async function buscarNoBanco(placa) {
-        if (placa.length < 7) return;
+        const pL = placa.toUpperCase().trim().replace(/\s|-/g, "");
+        if (pL.length < 7 || pL === placaAtiva) return;
+        const msg = document.getElementById('msg-busca');
+        msg.innerText = "🔍 Buscando..."; msg.style.color = "blue"; msg.style.display = "block";
         const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRKYiYPdmLaEyTMG_lGfXzrZKA4zIn3e3UyynAP1_9GdMy9En-2dEmum6ubX5kLZcTa_E_kQn2aSXtH/pub?gid=128063943&single=true&output=csv`;
         try {
             const r = await fetch(url); const txt = await r.text();
             const linhas = txt.split('\n').map(l => l.split(',').map(c => c.replace(/"/g, "").trim()));
-            const v = linhas.find(cols => cols[0].toUpperCase() === placa.toUpperCase());
+            const v = linhas.find(cols => cols[0].replace(/\s|-/g, "").toUpperCase() === pL);
             if (v) {
+                placaAtiva = pL;
                 document.getElementById('chassi').value = v[1]; document.getElementById('modeloVeiculo').value = v[2];
                 document.getElementById('empresa').value = v[3]; document.getElementById('cnpj').value = v[4];
-                placaAtiva = placa; gerarCamposFotos();
-            }
-        } catch (e) { console.error("Erro na busca"); }
+                msg.innerText = "✅ Localizado!"; msg.style.color = "green"; gerarCamposFotos();
+            } else { msg.innerText = "❌ Placa Não encontrada!"; msg.style.color = "red"; placaAtiva = ""; limparCamposAuto(); }
+        } catch (e) { msg.innerText = "⚠️ Erro de rede."; }
     }
+
+    function limparCamposAuto() { ['chassi', 'modeloVeiculo', 'empresa', 'cnpj'].forEach(id => document.getElementById(id).value = ""); document.getElementById('gridFotos').innerHTML = '<p style="color: red;">Placa inválida.</p>'; }
 
     function gerarCamposFotos() {
         const modFull = document.getElementById('modeloVeiculo').value.toUpperCase();
@@ -157,15 +199,15 @@
         
         let marca = modFull.includes("NEXTEM") ? "NEXTEM" : "RAP";
         let prefixo = marca.toLowerCase() + "_";
-        let listaEtiquetas = (marca === "NEXTEM") ? fotosNextem : fotosRap; [cite: 1, 3]
-
+        let listaEtiquetas = (marca === "NEXTEM") ? fotosNextem : fotosRap;
+        
         listaEtiquetas.forEach((label, i) => {
             const nomeArquivo = mapeamentoPorMarca[marca][label] || "";
             const caminhoRef = nomeArquivo ? PATH_IMG + prefixo + nomeArquivo : "";
             
             const htmlRef = caminhoRef ? `
                 <div class="ref-container">
-                    <span style="font-size:10px; font-weight:bold; color:#666;">REFERÊNCIA:</span>
+                    <span style="font-size:10px; font-weight:bold; color:#666;">GUIDE / REFERÊNCIA:</span>
                     <img src="${caminhoRef}" class="ref-img" onerror="this.parentElement.style.display='none'">
                 </div>` : "";
 
@@ -180,16 +222,18 @@
     }
 
     function pegarLocalizacao() {
-        navigator.geolocation.getCurrentPosition((p) => {
-            userLoc = `Lat: ${p.coords.latitude} Lon: ${p.coords.longitude}`;
-            document.getElementById('status-gps').innerText = "📍 Localização capturada!";
-            document.getElementById('step-gps').style.display = 'none';
-            document.getElementById('step-form').style.display = 'block';
-            pad = new SignaturePad(document.getElementById('signature-pad'));
-        });
+        let btnG = document.getElementById('btn-gps'); btnG.innerText = "CALIBRANDO GPS...";
+        watchId = navigator.geolocation.watchPosition((p) => {
+            if (p.coords.accuracy <= 65) {
+                userLoc = `Lat: ${p.coords.latitude} Lon: ${p.coords.longitude} (Erro: ${p.coords.accuracy.toFixed(1)}m)`;
+                navigator.geolocation.clearWatch(watchId);
+                document.getElementById('step-gps').style.display = 'none'; document.getElementById('step-form').style.display = 'block';
+                if (!pad) { pad = new SignaturePad(canvas); resizeCanvas(); }
+            }
+        }, null, { enableHighAccuracy: true });
     }
 
-    function compactar(input, id) {
+    function compactarFotoDano(input) {
         if (!input.files[0]) return;
         const reader = new FileReader();
         reader.onload = (e) => {
@@ -200,26 +244,57 @@
                 if (w > max) { h *= max / w; w = max; }
                 cv.width = w; cv.height = h;
                 cv.getContext('2d').drawImage(img, 0, 0, w, h);
-                fotos['foto'+id] = cv.toDataURL('image/jpeg', 0.6);
-                const preview = document.getElementById('v'+id);
-                preview.src = fotos['foto'+id]; preview.style.display = 'block';
+                fotoAvariaBase64 = cv.toDataURL('image/jpeg', 0.6);
+                const preview = document.getElementById('previewDano');
+                preview.src = fotoAvariaBase64; preview.style.display = 'block';
             };
             img.src = e.target.result;
         };
         reader.readAsDataURL(input.files[0]);
     }
 
+    function compactar(input, id) {
+        if (!input.files[0]) return; const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image(); img.onload = () => {
+                const cv = document.createElement('canvas'); const max = 800; let w = img.width, h = img.height;
+                if (w > max) { h *= max / w; w = max; } cv.width = w; cv.height = h;
+                cv.getContext('2d').drawImage(img, 0, 0, w, h);
+                fotos['foto'+id] = cv.toDataURL('image/jpeg', 0.6);
+                const preview = document.getElementById('v'+id); preview.src = fotos['foto'+id]; preview.style.display = 'block';
+            }; img.src = e.target.result;
+        }; reader.readAsDataURL(input.files[0]);
+    }
+
     function maskTel(i) { let v = i.value.replace(/\D/g, ""); v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); v = v.replace(/(\d)(\d{4})$/, "$1-$2"); i.value = v; }
+    function resizeCanvas() { const ratio = Math.max(window.devicePixelRatio || 1, 1); canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio; canvas.getContext("2d").scale(ratio, ratio); }
+    function fecharJanela() { window.close(); }
+    function iniciarTimer() {
+        let seg = 10;
+        const contador = setInterval(() => {
+            seg--;
+            const elementoTimer = document.getElementById('timer');
+            if (elementoTimer) { elementoTimer.innerText = seg; }
+            if (seg <= 0) { clearInterval(contador); fecharJanela(); }
+        }, 1000);
+    }
 
     document.getElementById("formFever").onsubmit = async (e) => {
-        e.preventDefault();
-        if(pad.isEmpty()) return alert("Assine o checklist!");
+        e.preventDefault(); 
+        const statusDano = document.getElementById("dano").value;
+        if (statusDano === "Sim") {
+            if (!document.getElementById("desc").value.trim()) return alert("Descreva o dano!");
+            if (!fotoAvariaBase64) return alert("Tire a foto da avaria!");
+        }
+        if(placaAtiva === "" || pad.isEmpty()) return alert("Valide a placa e assine!");
+        
         document.getElementById("loading").style.display = "flex";
-        const payload = { ...fotos, placa: placaAtiva, localizacao: userLoc, assinatura: pad.toDataURL(), timestamp: new Date().toLocaleString("pt-BR") };
-        // Envio para o Apps Script (URL encurtada do seu script original)
-        await fetch("https://script.google.com/macros/s/AKfycbwq9SlcLP9bCDT27SU1w_mAo3wmA98abYt3qSGriNYeqxewrT4C2wsk0Q9tnq6GgPAb/exec", 
-        { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-        alert("Enviado com sucesso!"); location.reload();
+        const payload = { ...fotos, fotoDano: fotoAvariaBase64, placa: document.getElementById("placa").value, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cnpj: document.getElementById("cnpj").value, cliente: document.getElementById("cliente").value, telefone: document.getElementById("telefone").value, dano: statusDano, desc: document.getElementById("desc").value || "Sem obs", assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
+        try {
+            await fetch("https://script.google.com/macros/s/AKfycbwq9SlcLP9bCDT27SU1w_mAo3wmA98abYt3qSGriNYeqxewrT4C2wsk0Q9tnq6GgPAb/exec", 
+            { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            document.getElementById("loading").style.display = "none"; document.getElementById("step-form").style.display = "none"; document.getElementById("success-screen").style.display = "block"; iniciarTimer();
+        } catch (err) { alert("Erro ao enviar."); document.getElementById("loading").style.display = "none"; }
     };
 </script>
 </body>
