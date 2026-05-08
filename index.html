@@ -43,7 +43,7 @@
             content: "FOTO de REFERÊNCIA"; position: absolute; top: 2px; left: 8px; 
             font-size: 10px; font-weight: bold; color: #000; letter-spacing: 1px;
         }
-        .ref-img { width: 100%; max-width: 250px; height: auto; display: block; margin: 0 auto; opacity: 0.6; filter: grayscale(90%); padding-top: 15px; }
+        .ref-img { width: 100%; max-width: 250px; height: auto; display: block; margin: 0 auto; opacity: 0.6; filter: grayscale(90%); padding-top: 10px; }
         
         /* Foto capturada pelo usuário */
         .preview-img { width: 100%; height: auto; max-height: 350px; object-fit: contain; display: none; border: 3px solid #00ffcc; border-radius: 8px; }
@@ -51,6 +51,7 @@
         canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; touch-action: none; }
         .btn-main { width: 100%; padding: 18px; background: #000; color: #00ffcc; border: none; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 4px; margin-top: 20px; }
         .btn-gps { background: #00ffcc; color: #000; animation: pulse 2s infinite; }
+        .btn-secondary { background: #444; color: #fff; margin-top: 10px; font-size: 14px; }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
@@ -132,6 +133,7 @@
         <h1 style="font-size: 80px; color: #00ffcc; margin: 0;">✔</h1>
         <h2>Sucesso!</h2>
         <button onclick="location.reload()" class="btn-main">NOVO</button>
+        <button onclick="fecharJanela()" class="btn-main btn-secondary">FECHAR EM <span id="timer">10</span>s</button>
     </div>
 </div>
 
@@ -214,7 +216,6 @@
         reader.readAsDataURL(input.files[0]);
     }
 
-    // Função para permitir que o usuário troque a foto se errar
     function resetarFoto(id) {
         if(confirm("Deseja tirar essa foto novamente?")) {
             document.getElementById('ref-'+id).style.display = 'block';
@@ -253,6 +254,19 @@
     function maskTel(i) { let v = i.value.replace(/\D/g, ""); v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); v = v.replace(/(\d)(\d{4})$/, "$1-$2"); i.value = v; }
     function resizeCanvas() { const ratio = Math.max(window.devicePixelRatio || 1, 1); canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio; canvas.getContext("2d").scale(ratio, ratio); }
 
+    function fecharJanela() { window.close(); }
+    function iniciarTimer() { 
+        let seg = 10; 
+        const contador = setInterval(() => { 
+            seg--; 
+            if(document.getElementById('timer')) document.getElementById('timer').innerText = seg; 
+            if(seg<=0) {
+                clearInterval(contador);
+                fecharJanela();
+            }
+        }, 1000); 
+    }
+
     document.getElementById("formFever").onsubmit = async (e) => {
         e.preventDefault(); 
         if(placaAtiva === "" || pad.isEmpty()) return alert("Preencha tudo e assine!");
@@ -260,7 +274,10 @@
         const payload = { ...fotos, fotoDano: fotoAvariaBase64, placa: placaAtiva, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cnpj: document.getElementById("cnpj").value, cliente: document.getElementById("cliente").value, telefone: document.getElementById("telefone").value, dano: document.getElementById("dano").value, desc: document.getElementById("desc").value || "", assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
         try {
             await fetch("https://script.google.com/macros/s/AKfycbwq9SlcLP9bCDT27SU1w_mAo3wmA98abYt3qSGriNYeqxewrT4C2wsk0Q9tnq6GgPAb/exec", { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
-            document.getElementById("loading").style.display = "none"; document.getElementById("step-form").style.display = "none"; document.getElementById("success-screen").style.display = "block";
+            document.getElementById("loading").style.display = "none"; 
+            document.getElementById("step-form").style.display = "none"; 
+            document.getElementById("success-screen").style.display = "block";
+            iniciarTimer();
         } catch (err) { alert("Erro ao enviar."); }
     };
 </script>
