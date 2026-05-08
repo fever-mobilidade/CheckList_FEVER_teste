@@ -32,11 +32,11 @@
         
         /* ESTILOS DAS FOTOS */
         .photo-item { 
-            background: #ffffff; padding: 15px; border-radius: 12px; text-align: center; 
-            margin-bottom: 25px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            background: #ffffff; padding: 18px 15px; border-radius: 12px; text-align: center; 
+            margin-bottom: 30px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .ref-container { 
-            position: relative; margin-bottom: 5px; background: #f0f0f0; 
+            position: relative; margin-bottom: 2px; background: #f0f0f0; 
             padding: 10px; border-radius: 8px; border: 2px dashed #bbb; overflow: hidden;
         }
         .ref-container::before {
@@ -81,7 +81,7 @@
             <div class="placa-container">
                 <label style="margin-top:0;">DIGITE A PLACA DO VEÍCULO *</label>
                 <div class="busca-container">
-                    <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onblur="buscarNoBanco(this.value)">
+                    <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onfocus="this.value = ''; resetarBuscaPlaca();" onblur="buscarNoBanco(this.value)">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
                 </div>
                 <p id="msg-busca"></p>
