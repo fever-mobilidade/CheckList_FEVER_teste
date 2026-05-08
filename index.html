@@ -36,11 +36,11 @@
             margin-bottom: 25px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         .ref-container { 
-            position: relative; margin-bottom: 15px; background: #f0f0f0; 
+            position: relative; margin-bottom: 5px; background: #f0f0f0; 
             padding: 10px; border-radius: 8px; border: 2px dashed #bbb; overflow: hidden;
         }
         .ref-container::before {
-            content: "FOTO de REFERÊNCIA"; position: absolute; top: 5px; right: 8px; 
+            content: "FOTO de REFERÊNCIA"; position: absolute; top: 3px; left: 5px; 
             font-size: 9px; font-weight: bold; color: #999; letter-spacing: 1px;
         }
         .ref-img { width: 100%; max-width: 250px; height: auto; display: block; margin: 0 auto; opacity: 0.4; filter: grayscale(100%); }
@@ -185,7 +185,7 @@
                     </div>
                     <input type="file" id="file-${i+1}" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required>
                     <img id="v${i+1}" class="preview-img" onclick="resetarFoto(${i+1})">
-                    <p id="hint-${i+1}" style="display:none; font-size:11px; color:gray; margin-top:5px;">Toque na foto para refazer</p>
+                    <p id="hint-${i+1}" style="display:none; font-size:13px; color:gray; margin-top:5px;">Toque na foto para refazer</p>
                 </div>`;
         });
     }
