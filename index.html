@@ -294,7 +294,7 @@ de dados acarretará responsabilidade civil e administrativa, conforme as polít
         document.getElementById("loading").style.display = "flex";
         const payload = { ...fotos, fotoDano: fotoAvariaBase64, placa: placaAtiva, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cnpj: document.getElementById("cnpj").value, cliente: document.getElementById("cliente").value, telefone: document.getElementById("telefone").value, dano: document.getElementById("dano").value, desc: document.getElementById("desc").value || "", assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
         try {
-            await fetch("https://script.google.com/macros/s/AKfycbwq9SlcLP9bCDT27SU1w_mAo3wmA98abYt3qSGriNYeqxewrT4C2wsk0Q9tnq6GgPAb/exec", { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            await fetch("https://script.google.com/macros/s/AKfycbx2JAPlWyvesmbcfcjARhoHz0m4mFBIk9tEnwc716Q3iSlw5IR-H2fcpyIQLBAFKZ1Oqg/exec", { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             document.getElementById("loading").style.display = "none"; 
             document.getElementById("step-form").style.display = "none"; 
             document.getElementById("success-screen").style.display = "block";
