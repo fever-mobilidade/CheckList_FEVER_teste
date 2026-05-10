@@ -210,7 +210,7 @@
     itens.forEach(it => { document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; });
 
     const fLabels = ["Foto de Frente", "Foto Lateral Esquerda (motorista)", "Foto Traseira", "Foto Lateral Direita (passageiro)", "Foto da Placa", "Foto do Chassi", "Foto do Painel/KM"];
-    const fImagensPadrao = ["frente.png", "lateral_esquerda.png", "traseira.png", "lateral_direita.png", "placa.png", "chassi.png", "painel.png"];
+    const fImagensPadrao = ["frente.jpg", "lateral_esquerda.jpg", "traseira.jpg", "lateral_direita.jpg", "placa.jpg", "chassi.jpg", "painel.jpg"];
 
     // Geração inicial do grid (vazio ou com padrão)
     fLabels.forEach((l, i) => { 
@@ -226,8 +226,8 @@
     // Função que troca as imagens conforme a marca
     function atualizarImagensReferencia(modelo) {
         const marca = modelo.toUpperCase().includes("NEXTEM") ? "nextem" : "rap";
-        // Ajusta os nomes das imagens para o seu padrão de pastas (ex: img/nextem_frente.png)
-        const nomesImagens = ["frente.png", "lateral_esquerda.png", "traseira.png", "lateral_direita.png", "placa.png", "chassi.png", "painel.png"];
+        // Ajusta os nomes das imagens para o seu padrão de pastas (ex: img/nextem_frente.jpg)
+        const nomesImagens = ["frente.jpg", "lateral_esquerda.jpg", "traseira.jpg", "lateral_direita.jpg", "placa.jpg", "chassi.jpg", "painel.jpg"];
         
         nomesImagens.forEach((imgNome, i) => {
             const imgRef = document.getElementById(`ref${i+1}`);
