@@ -158,25 +158,41 @@
             </div>`; 
     });
 
-    function resetarBusca() {
-        if(placaAtiva !== "") {
-            document.getElementById('placa').value = "";
-            document.getElementById('chassi').value = "";
-            document.getElementById('modeloVeiculo').value = "";
-            document.getElementById('empresa').value = "";
-            document.getElementById('cnpj').value = "";
-            document.getElementById('msg-busca').style.display = "none";
-            document.getElementById('secaoFotos').style.display = "none";
-            placaAtiva = "";
-            for(let key in fotos) delete fotos[key];
-            fLabels.forEach((_, i) => {
-                document.getElementById(`v${i+1}`).style.display = 'none';
-                document.getElementById(`file${i+1}`).style.display = 'block';
-                document.getElementById(`ref${i+1}`).style.display = 'block';
-                document.getElementById(`hint${i+1}`).style.display = 'none';
-            });
+   function resetarBusca() {
+    // 1. Limpa o valor do campo de texto imediatamente
+    const campoPlaca = document.getElementById('placa');
+    campoPlaca.value = ""; 
+    
+    // 2. Reseta a placa ativa e limpa as fotos da memória
+    placaAtiva = "";
+    for(let key in fotos) delete fotos[key];
+
+    // 3. Limpa os campos de leitura (Readonly)
+    document.getElementById('chassi').value = "";
+    document.getElementById('modeloVeiculo').value = "";
+    document.getElementById('empresa').value = "";
+    document.getElementById('cnpj').value = "";
+
+    // 4. Esconde mensagens e seções de fotos
+    document.getElementById('msg-busca').style.display = "none";
+    document.getElementById('secaoFotos').style.display = "none";
+
+    // 5. Reseta os previews das fotos para o estado original (cinza)
+    fLabels.forEach((_, i) => {
+        const preview = document.getElementById(`v${i+1}`);
+        const fileInput = document.getElementById(`file${i+1}`);
+        const refImg = document.getElementById(`ref${i+1}`);
+        const hint = document.getElementById(`hint${i+1}`);
+        
+        if(preview) preview.style.display = 'none';
+        if(fileInput) {
+            fileInput.style.display = 'block';
+            fileInput.value = ""; // Limpa o arquivo selecionado no input
         }
-    }
+        if(refImg) refImg.style.display = 'block';
+        if(hint) hint.style.display = 'none';
+    });
+}
 
     async function buscarNoBanco(placa) {
         const pL = placa.toUpperCase().trim().replace(/\s|-/g, "");
