@@ -285,7 +285,7 @@
             assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR")
         };
         try {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbzQXmlK5hOW8j479lBCBQr75uVW_YhwVo-3HoA33solJYFjRupXxvV2dv974KW8274chQ/exec";
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxMQeEyBETVAbcTGTzB5SluEVHZrjZpM6neCVDgnvrm_B_dmBQ4suj92deYWiFjSZeA/exec";
             await fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             document.getElementById("loading").style.display = "none";
             document.getElementById("step-form").style.display = "none";
