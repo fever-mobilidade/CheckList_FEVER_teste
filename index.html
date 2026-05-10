@@ -63,10 +63,11 @@
 <div id="loading"><div class="spinner"></div><p>ENVIANDO AUDITORIA...<br>Aguarde.</p></div>
 
 <div class="container">
-    <div class="header"><h1>FEVER</h1><p>CheckList de recebimento</p></div>
+    <div class="header"><h1>FEVER</h1><p>O FUTURO É ELETRIZANTE<br>CheckList de recebimento do veículo</p></div>
 
     <div id="step-gps">
-        <h2>Localização</h2>
+        <h2>Localização do Checklist</h2>
+        <p>Clique abaixo para registrar o local exato.</p>
         <button type="button" id="btn-gps" class="btn-main btn-gps" onclick="pegarLocalizacao()">📍 REGISTRAR LOCALIZAÇÃO</button>
         <p id="precisao-viva" style="font-size:12px; color:#666; margin-top:10px;"></p>
     </div>
@@ -74,7 +75,7 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label>PLACA OU CHASSI (8 dígitos) *</label>
+                <label>PLACA OU CHASSI (8 ultimos dígitos) *</label>
                 <div class="busca-container">
                     <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onclick="resetarBusca()">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
