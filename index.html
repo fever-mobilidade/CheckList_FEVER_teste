@@ -20,7 +20,6 @@
         #step-form { display: none; }
         #success-screen { display: none; text-align: center; padding: 40px 10px; }
         
-        /* Esconde a área de fotos inicialmente */
         #secaoFotos { display: none; margin-top: 20px; }
 
         label { display: block; margin-top: 15px; font-weight: bold; font-size: 14px; }
@@ -36,22 +35,30 @@
         .check-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 12px; }
         .check-table th, .check-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         
-        .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; }
+        .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; position: relative; }
         .ref-img { width: 100%; height: auto; max-height: 180px; object-fit: contain; border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; opacity: 0.6; filter: grayscale(70%); }
-        .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 2px solid #000; }
         
+        .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 3px solid #000; border-radius: 4px; cursor: pointer; }
+        .hint-refazer { display: none; font-size: 11px; color: #666; margin-top: 5px; font-style: italic; }
+
+        .termo-aceite { 
+            background: #fdfdfd; border: 1px solid #ddd; padding: 15px; border-radius: 4px; 
+            font-size: 13px; line-height: 1.6; margin: 25px 0; color: #333;
+            text-align: justify; border-left: 5px solid #00ffcc;
+        }
+
         canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; touch-action: none; }
         .btn-main { width: 100%; padding: 18px; background: #000; color: #00ffcc; border: none; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 4px; margin-top: 20px; }
         .btn-gps { background: #00ffcc; color: #000; }
         
-        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; }
+        #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div id="loading"><div class="spinner"></div><p>ENVIANDO AUDITORIA...</p></div>
+<div id="loading"><div class="spinner"></div><p>ENVIANDO AUDITORIA...<br>Aguarde.</p></div>
 
 <div class="container">
     <div class="header"><h1>FEVER</h1><p>CheckList de recebimento</p></div>
@@ -88,16 +95,20 @@
                 <tbody id="corpoTabela"></tbody>
             </table>
 
+            <label>Danos constatados?</label>
+            <select id="dano" onchange="document.getElementById('campoObs').style.display=(this.value=='Sim'?'block':'none')">
+                <option value="Não">Não</option><option value="Sim">Sim</option>
+            </select>
+            <div id="campoObs" style="display:none; margin-bottom: 20px;"><textarea id="desc" rows="3" placeholder="Descreva o dano detalhadamente..."></textarea></div>
+
             <div id="secaoFotos">
                 <h3>Fotos Obrigatórias</h3>
                 <div id="gridFotos"></div>
             </div>
 
-            <label>Danos constatados?</label>
-            <select id="dano" onchange="document.getElementById('campoObs').style.display=(this.value=='Sim'?'block':'none')">
-                <option value="Não">Não</option><option value="Sim">Sim</option>
-            </select>
-            <div id="campoObs" style="display:none;"><textarea id="desc" rows="3" placeholder="Descreva o dano..."></textarea></div>
+            <div class="termo-aceite">
+                <strong>TERMO DE RESPONSABILIDADE:</strong> Declaro que as informações acima refletem o estado real do veículo. Esta assinatura eletrônica está vinculada aos dados de geolocalização e identificação do dispositivo móvel abaixo descritos, servindo como evidência técnica de conformidade.
+            </div>
 
             <label>Sua Assinatura *</label>
             <canvas id="signature-pad"></canvas>
@@ -126,19 +137,20 @@
     const fLabels = ["Frente", "Lateral Esquerda", "Traseira", "Lateral Direita", "Placa", "Chassi", "Painel/KM"];
     const fFicheiros = ["frente.jpg", "lateral_esquerda.jpg", "traseira.jpg", "lateral_direita.jpg", "placa.jpg", "chassi.jpg", "painel.jpg"];
 
-    // Iniciar Tabela
+    // Gerar Tabela
     itens.forEach(it => { 
         document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; 
     });
 
-    // Iniciar Grid de Fotos
+    // Gerar Grid de Fotos com lógica de clique para refazer
     fLabels.forEach((l, i) => { 
         document.getElementById('gridFotos').innerHTML += `
             <div class="photo-item">
                 <label>📷 ${l}</label>
                 <img id="ref${i+1}" src="" class="ref-img">
-                <input type="file" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required>
-                <img id="v${i+1}" class="preview-img">
+                <input type="file" id="file${i+1}" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required style="margin-top:10px;">
+                <img id="v${i+1}" class="preview-img" onclick="document.getElementById('file${i+1}').click()" title="Clique para refazer">
+                <p id="hint${i+1}" class="hint-refazer">Toque na foto acima para refazer</p>
             </div>`; 
     });
 
@@ -165,7 +177,6 @@
                 document.getElementById('cnpj').value = v[4];
                 msg.innerText = "✅ Veículo Localizado!"; msg.style.color = "green";
                 
-                // Mostrar fotos e atualizar imagens
                 document.getElementById('secaoFotos').style.display = "block";
                 atualizarImagensReferencia(v[2]);
             } else {
@@ -180,11 +191,8 @@
         fFicheiros.forEach((nome, i) => {
             const img = document.getElementById(`ref${i+1}`);
             if(img) {
-                // Tenta carregar .jpg (minúsculo)
                 const caminho = `./img/${marca}_${nome}`;
                 img.src = caminho;
-                
-                // Fallback para .JPG caso o GitHub tenha salvo em maiúsculas
                 img.onerror = function() {
                     if(!this.src.includes(".JPG")) {
                         this.src = caminho.replace(".jpg", ".JPG");
@@ -222,9 +230,15 @@
                 cv.getContext('2d').drawImage(img, 0, 0, w, h);
                 const b64 = cv.toDataURL('image/jpeg', 0.7);
                 fotos['foto'+id] = b64;
+                
+                // Atualiza visual
                 const preview = document.getElementById('v'+id);
-                preview.src = b64; preview.style.display = 'block';
+                preview.src = b64; 
+                preview.style.display = 'block';
+                
                 document.getElementById('ref'+id).style.display = 'none';
+                document.getElementById('file'+id).style.display = 'none'; // Esconde o input original
+                document.getElementById('hint'+id).style.display = 'block'; // Mostra a dica "Toque para refazer"
             }; img.src = e.target.result;
         }; reader.readAsDataURL(input.files[0]);
     }
@@ -249,7 +263,6 @@
         if(pad.isEmpty()) return alert("Assine o checklist!");
         
         document.getElementById("loading").style.display = "flex";
-        
         const checks = {};
         itens.forEach(it => { 
             const el = document.querySelector(`input[name="${it}"]:checked`); 
@@ -274,7 +287,7 @@
             document.getElementById("step-form").style.display = "none";
             document.getElementById("success-screen").style.display = "block";
         } catch (err) { 
-            alert("Erro no envio. Verifique a conexão."); 
+            alert("Erro no envio."); 
             document.getElementById("loading").style.display = "none";
         }
     };
