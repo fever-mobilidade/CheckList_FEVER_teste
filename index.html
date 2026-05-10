@@ -36,7 +36,6 @@
         .check-table th, .check-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         
         .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; position: relative; }
-        /* Adicionado cursor pointer para indicar que a referência é clicável */
         .ref-img { width: 100%; height: auto; max-height: 180px; object-fit: contain; border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; opacity: 0.6; filter: grayscale(70%); cursor: pointer; transition: opacity 0.3s; }
         .ref-img:active { opacity: 1; }
         
@@ -52,6 +51,7 @@
         canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; touch-action: none; }
         .btn-main { width: 100%; padding: 18px; background: #000; color: #00ffcc; border: none; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 4px; margin-top: 20px; }
         .btn-gps { background: #00ffcc; color: #000; }
+        .btn-secondary { background: #444; color: #fff; margin-top: 10px; font-size: 14px; }
         
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
@@ -63,11 +63,10 @@
 <div id="loading"><div class="spinner"></div><p>ENVIANDO AUDITORIA...<br>Aguarde.</p></div>
 
 <div class="container">
-     <div class="header"><h1>FEVER</h1><p>O FUTURO É ELETRIZANTE<br>CheckList de recebimento do veículo</p></div>
+    <div class="header"><h1>FEVER</h1><p>CheckList de recebimento</p></div>
 
     <div id="step-gps">
-         <h2>Localização do Checklist</h2>
-        <p>Clique abaixo para registrar o local exato.</p>
+        <h2>Localização</h2>
         <button type="button" id="btn-gps" class="btn-main btn-gps" onclick="pegarLocalizacao()">📍 REGISTRAR LOCALIZAÇÃO</button>
         <p id="precisao-viva" style="font-size:12px; color:#666; margin-top:10px;"></p>
     </div>
@@ -75,7 +74,7 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label>PLACA OU CHASSI (8 ultimos dígitos) *</label>
+                <label>PLACA OU CHASSI (8 dígitos) *</label>
                 <div class="busca-container">
                     <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onclick="resetarBusca()">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
@@ -125,6 +124,7 @@
         <h1 style="font-size: 80px; color: #00ffcc;">✔</h1>
         <h2>Enviado com Sucesso!</h2>
         <button onclick="location.reload()" class="btn-main">NOVO CHECKLIST</button>
+        <button onclick="fecharJanela()" class="btn-main btn-secondary">FECHAR EM <span id="timer">10</span>s</button>
     </div>
 </div>
 
@@ -136,8 +136,8 @@
     const fotos = {};
     let placaAtiva = "";
 
-    const itens = ["Pintura e Lataria", "Pneus", "Rodas", "Parabrisa e palhetas", "Retrovisores", "Documentação", "Chave e baú", "Ferramentas", "Adesivos", "Painel e Cabine", "Carregador", "Luzes", "Ar-condicionado"];
-    const fLabels = ["Frente", "Lateral Esquerda", "Traseira", "Lateral Direita", "Placa", "Chassi", "Painel/KM"];
+    const itens = ["Pintura e Lataria", "Pneus", "Rodas", "Parabrisa e palhetas", "Retrovisores", "Documentação", "Chave do veiculo e baú", "Kit de ferramentas", "Adesivos e Etiquetas", "Painel e Cabine", "Estação de Recarga portátil", "Luzes externas", "Luzes internas", "Ar-condicionado", "Vidros e travas elétricas", "Kit Reparo do Pneu", "Central Multimidia"];
+    const fLabels = ["Foto Frente", "Foto Lateral Esquerda", "Foto Traseira", "Foto Lateral Direita", "Foto Placa", "Foto Chassi", "Foto Painel/KM"];
     const fFicheiros = ["frente.jpg", "lat_esq.jpg", "traseira.jpg", "lat_dir.jpg", "placa.jpg", "chassi.jpg", "painel.jpg"];
 
     // Gerar Tabela
@@ -145,7 +145,7 @@
         document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; 
     });
 
-    // Grid de Fotos: Referência agora também dispara o clique no input
+    // Grid de Fotos
     fLabels.forEach((l, i) => { 
         document.getElementById('gridFotos').innerHTML += `
             <div class="photo-item">
@@ -269,27 +269,65 @@
         canvas.getContext("2d").scale(ratio, ratio);
     }
 
+    // FUNÇÕES DE FECHAMENTO E TIMER ADICIONADAS AQUI
+    function fecharJanela() { window.close(); }
+    
+    function iniciarTimer() {
+        let seg = 10;
+        const contador = setInterval(() => {
+            seg--;
+            const timerEl = document.getElementById('timer');
+            if (timerEl) { timerEl.innerText = seg; }
+            if (seg <= 0) { 
+                clearInterval(contador); 
+                fecharJanela(); 
+            }
+        }, 1000);
+    }
+
     document.getElementById("formFever").onsubmit = async (e) => {
         e.preventDefault();
         if(placaAtiva === "") return alert("Busque a placa primeiro!");
         if(pad.isEmpty()) return alert("Assine o checklist!");
         document.getElementById("loading").style.display = "flex";
+        
         const checks = {};
         itens.forEach(it => { 
             const el = document.querySelector(`input[name="${it}"]:checked`); 
             checks[it] = el ? el.value : "N/A"; 
         });
+
+        // Todos os campos garantidos para o Google Apps Script não falhar
         const payload = { 
-            ...fotos, checklistItems: checks, placa: document.getElementById("placa").value,
-            modelo: document.getElementById("modeloVeiculo").value, usuario: document.getElementById("usuario").value,
-            assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR")
+            ...fotos, 
+            checklistItems: checks, 
+            placa: document.getElementById("placa").value,
+            chassi: document.getElementById("chassi").value,
+            modelo: document.getElementById("modeloVeiculo").value,
+            km: document.getElementById("km").value,
+            empresa: document.getElementById("empresa").value,
+            cnpj: document.getElementById("cnpj").value,
+            usuario: document.getElementById("usuario").value,
+            telefone: document.getElementById("telefone").value,
+            dataRecebimento: document.getElementById("dataRecebimento").value,
+            dano: document.getElementById("dano").value,
+            desc: document.getElementById("desc").value,
+            assinatura: pad.toDataURL(), 
+            localizacao: userLoc, 
+            timestamp: new Date().toLocaleString("pt-BR")
         };
+
         try {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbzbnLo9NNPcRmqH2fsn9bPlzkn68VJyCHhLH-NkVpzHHajVhAeWBweS3s2qzf6yXW6B8w/exec";
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxMQeEyBETVAbcTGTzB5SluEVHZrjZpM6neCVDgnvrm_B_dmBQ4suj92deYWiFjSZeA/exec";
             await fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            
             document.getElementById("loading").style.display = "none";
             document.getElementById("step-form").style.display = "none";
             document.getElementById("success-screen").style.display = "block";
+            
+            // ATIVANDO O CONTADOR DE 10 SEGUNDOS AQUI
+            iniciarTimer();
+            
         } catch (err) { alert("Erro no envio."); document.getElementById("loading").style.display = "none"; }
     };
 </script>
