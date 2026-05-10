@@ -36,7 +36,9 @@
         .check-table th, .check-table td { border: 1px solid #ddd; padding: 10px; text-align: center; }
         
         .photo-item { background: #f9f9f9; padding: 15px; border-radius: 8px; text-align: center; margin-bottom: 20px; border: 1px solid #ddd; position: relative; }
-        .ref-img { width: 100%; height: auto; max-height: 180px; object-fit: contain; border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; opacity: 0.6; filter: grayscale(70%); }
+        /* Adicionado cursor pointer para indicar que a referência é clicável */
+        .ref-img { width: 100%; height: auto; max-height: 180px; object-fit: contain; border: 2px dashed #00ffcc; border-radius: 8px; margin-bottom: 10px; opacity: 0.6; filter: grayscale(70%); cursor: pointer; transition: opacity 0.3s; }
+        .ref-img:active { opacity: 1; }
         
         .preview-img { width: 100%; height: auto; max-height: 250px; object-fit: contain; display: none; margin-top: 10px; border: 3px solid #000; border-radius: 4px; cursor: pointer; }
         .hint-refazer { display: none; font-size: 11px; color: #666; margin-top: 5px; font-style: italic; }
@@ -61,7 +63,7 @@
 <div id="loading"><div class="spinner"></div><p>ENVIANDO AUDITORIA...<br>Aguarde.</p></div>
 
 <div class="container">
-    <div class="header"><h1>FEVER</h1><p>CheckList de recebimento</p></div>
+     <div class="header"><h1>FEVER</h1><p>O FUTURO É ELETRIZANTE<br>CheckList de recebimento do veículo</p></div>
 
     <div id="step-gps">
         <h2>Localização</h2>
@@ -72,7 +74,7 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label>PLACA OU CHASSI (8 dígitos) *</label>
+                <label>PLACA OU CHASSI (8 ultimos dígitos) *</label>
                 <div class="busca-container">
                     <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onclick="resetarBusca()">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
@@ -142,19 +144,18 @@
         document.getElementById('corpoTabela').innerHTML += `<tr><td style="text-align:left">${it}</td><td><input type="radio" name="${it}" value="Ok" required></td><td><input type="radio" name="${it}" value="Não Ok"></td><td><input type="radio" name="${it}" value="N/A"></td></tr>`; 
     });
 
-    // Gerar Grid de Fotos
+    // Grid de Fotos: Referência agora também dispara o clique no input
     fLabels.forEach((l, i) => { 
         document.getElementById('gridFotos').innerHTML += `
             <div class="photo-item">
                 <label>📷 ${l}</label>
-                <img id="ref${i+1}" src="" class="ref-img">
+                <img id="ref${i+1}" src="" class="ref-img" onclick="document.getElementById('file${i+1}').click()" title="Toque para tirar foto">
                 <input type="file" id="file${i+1}" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required style="margin-top:10px;">
                 <img id="v${i+1}" class="preview-img" onclick="document.getElementById('file${i+1}').click()" title="Clique para refazer">
                 <p id="hint${i+1}" class="hint-refazer">Toque na foto acima para refazer</p>
             </div>`; 
     });
 
-    // FUNÇÃO PARA REINICIAR TUDO AO CLICAR NA PLACA
     function resetarBusca() {
         if(placaAtiva !== "") {
             document.getElementById('placa').value = "";
@@ -165,11 +166,11 @@
             document.getElementById('msg-busca').style.display = "none";
             document.getElementById('secaoFotos').style.display = "none";
             placaAtiva = "";
-            // Opcional: Limpar fotos tiradas se quiser reset total
             for(let key in fotos) delete fotos[key];
             fLabels.forEach((_, i) => {
                 document.getElementById(`v${i+1}`).style.display = 'none';
                 document.getElementById(`file${i+1}`).style.display = 'block';
+                document.getElementById(`ref${i+1}`).style.display = 'block';
                 document.getElementById(`hint${i+1}`).style.display = 'none';
             });
         }
@@ -178,18 +179,14 @@
     async function buscarNoBanco(placa) {
         const pL = placa.toUpperCase().trim().replace(/\s|-/g, "");
         if(pL.length < 7) return alert("Digite a placa completa.");
-        
         const msg = document.getElementById('msg-busca');
         msg.innerText = "🔍 Buscando..."; msg.style.display = "block"; msg.style.color = "blue";
-
         const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRKYiYPdmLaEyTMG_lGfXzrZKA4zIn3e3UyynAP1_9GdMy9En-2dEmum6ubX5kLZcTa_E_kQn2aSXtH/pub?gid=128063943&single=true&output=csv`;
-        
         try {
             const r = await fetch(url);
             const txt = await r.text();
             const linhas = txt.split('\n').map(l => l.split(',').map(c => c.replace(/"/g, "").trim()));
             const v = linhas.find(cols => cols[0].replace(/\s|-/g, "").toUpperCase() === pL);
-            
             if (v) {
                 placaAtiva = pL;
                 document.getElementById('chassi').value = v[1]; 
@@ -197,7 +194,6 @@
                 document.getElementById('empresa').value = v[3]; 
                 document.getElementById('cnpj').value = v[4];
                 msg.innerText = "✅ Veículo Localizado!"; msg.style.color = "green";
-                
                 document.getElementById('secaoFotos').style.display = "block";
                 atualizarImagensReferencia(v[2]);
             } else {
@@ -215,9 +211,7 @@
                 const caminho = `./img/${marca}_${nome}`;
                 img.src = caminho;
                 img.onerror = function() {
-                    if(!this.src.includes(".JPG")) {
-                        this.src = caminho.replace(".jpg", ".JPG");
-                    }
+                    if(!this.src.includes(".JPG")) { this.src = caminho.replace(".jpg", ".JPG"); }
                 };
             }
         });
@@ -251,11 +245,8 @@
                 cv.getContext('2d').drawImage(img, 0, 0, w, h);
                 const b64 = cv.toDataURL('image/jpeg', 0.7);
                 fotos['foto'+id] = b64;
-                
                 const preview = document.getElementById('v'+id);
-                preview.src = b64; 
-                preview.style.display = 'block';
-                
+                preview.src = b64; preview.style.display = 'block';
                 document.getElementById('ref'+id).style.display = 'none';
                 document.getElementById('file'+id).style.display = 'none'; 
                 document.getElementById('hint'+id).style.display = 'block'; 
@@ -281,35 +272,24 @@
         e.preventDefault();
         if(placaAtiva === "") return alert("Busque a placa primeiro!");
         if(pad.isEmpty()) return alert("Assine o checklist!");
-        
         document.getElementById("loading").style.display = "flex";
         const checks = {};
         itens.forEach(it => { 
             const el = document.querySelector(`input[name="${it}"]:checked`); 
             checks[it] = el ? el.value : "N/A"; 
         });
-
         const payload = { 
-            ...fotos, 
-            checklistItems: checks, 
-            placa: document.getElementById("placa").value,
-            modelo: document.getElementById("modeloVeiculo").value,
-            usuario: document.getElementById("usuario").value,
-            assinatura: pad.toDataURL(),
-            localizacao: userLoc,
-            timestamp: new Date().toLocaleString("pt-BR")
+            ...fotos, checklistItems: checks, placa: document.getElementById("placa").value,
+            modelo: document.getElementById("modeloVeiculo").value, usuario: document.getElementById("usuario").value,
+            assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR")
         };
-
         try {
             const scriptURL = "https://script.google.com/macros/s/AKfycbzQXmlK5hOW8j479lBCBQr75uVW_YhwVo-3HoA33solJYFjRupXxvV2dv974KW8274chQ/exec";
             await fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             document.getElementById("loading").style.display = "none";
             document.getElementById("step-form").style.display = "none";
             document.getElementById("success-screen").style.display = "block";
-        } catch (err) { 
-            alert("Erro no envio."); 
-            document.getElementById("loading").style.display = "none";
-        }
+        } catch (err) { alert("Erro no envio."); document.getElementById("loading").style.display = "none"; }
     };
 </script>
 </body>
