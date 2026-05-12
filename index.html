@@ -30,20 +30,35 @@
         .busca-container { display: flex; gap: 8px; margin-top: 10px; }
         .btn-busca { background: #000; color: #00ffcc; border: none; padding: 0 20px; border-radius: 4px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
         
+        /* ESTILOS DAS FOTOS */
         .photo-item { 
             background: #ffffff; padding: 20px 15px; border-radius: 12px; text-align: center; 
             margin-bottom: 30px; border: 1px solid #eee; box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
-        /* Estilo da imagem de referência */
-        .ref-container { margin-bottom: 10px; cursor: pointer; }
-        .ref-img { width: 100%; max-width: 250px; height: auto; border-radius: 8px; border: 1px solid #ddd; }
+        .ref-container { 
+            position: relative; margin-bottom: 2px; background: #f0f0f0; 
+            padding: 10px; border-radius: 8px; border: 2px dashed #bbb; overflow: hidden;
+        }
+        .ref-container::before {
+            content: "FOTO de REFERÊNCIA"; position: absolute; top: 2px; left: 8px; 
+            font-size: 10px; font-weight: bold; color: #000; letter-spacing: 1px;
+        }
+        .ref-img { width: 100%; max-width: 250px; height: auto; display: block; margin: 0 auto; opacity: 0.6; filter: grayscale(90%); padding-top: 10px; }
         
-        .preview-img { width: 100%; height: auto; max-height: 350px; object-fit: contain; display: none; border: 3px solid #00ffcc; border-radius: 8px; cursor: pointer; margin-top: 10px; }
+        /* Estilo para o Termo de Responsabilidade */
+        .termo-aceite { 
+            background: #fdfdfd; border: 1px solid #ddd; padding: 15px; border-radius: 4px; 
+            font-size: 13px; line-height: 1.6; margin-top: 30px; color: #333;
+            text-align: justify; border-left: 5px solid #00ffcc;
+        }
+
+        .preview-img { width: 100%; height: auto; max-height: 350px; object-fit: contain; display: none; border: 3px solid #00ffcc; border-radius: 8px; }
 
         canvas#signature-pad { border: 2px solid #000; width: 100%; height: 200px; background: #fff; border-radius: 4px; touch-action: none; }
         .btn-main { width: 100%; padding: 18px; background: #000; color: #00ffcc; border: none; font-weight: bold; font-size: 18px; cursor: pointer; border-radius: 4px; margin-top: 20px; }
         .btn-gps { background: #00ffcc; color: #000; animation: pulse 2s infinite; }
         .btn-secondary { background: #444; color: #fff; margin-top: 10px; font-size: 14px; }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.03); } 100% { transform: scale(1); } }
         
         #loading { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); color: #00ffcc; z-index: 9999; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
         .spinner { border: 4px solid #f3f3f3; border-top: 4px solid #00ffcc; border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 15px; }
@@ -63,7 +78,9 @@
 
     <div id="step-gps">
         <h2>Localização do Checklist</h2>
+        <p>Clique abaixo para registrar o local exato.</p>
         <button type="button" id="btn-gps" class="btn-main btn-gps" onclick="pegarLocalizacao()">📍 REGISTRAR LOCALIZAÇÃO</button>
+        <p id="status-gps" style="margin-top:15px; font-size:14px; font-weight: bold;"></p>
     </div>
 
     <div id="step-form">
@@ -71,44 +88,50 @@
             <div class="placa-container">
                 <label style="margin-top:0;">DIGITE A PLACA DO VEÍCULO *</label>
                 <div class="busca-container">
-                    <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="ABC1D23" 
-                           oninput="this.value = this.value.toUpperCase()" 
-                           onfocus="resetarCamposSeErro();" 
-                           onblur="buscarNoBanco(this.value)">
+                    <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onfocus="this.value = ''; resetarBuscaPlaca();" onblur="buscarNoBanco(this.value)">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
                 </div>
                 <p id="msg-busca"></p>
             </div>
 
-            <label>CHASSI</label>
+            <label>CHASSI do Veículo</label>
             <input type="text" id="chassi" required readonly>
-            <label>Modelo</label>
+            <label>Modelo do veículo</label>
             <input type="text" id="modeloVeiculo" required readonly>
             <label>KM Atual *</label>
             <input type="number" id="km" required>
             <label>Empresa (Cliente)</label>
             <input type="text" id="empresa" required readonly>
-            <label>CNPJ</label>
+            <label>CNPJ Empresa</label>
             <input type="text" id="cnpj" required readonly>
-            <label>Nome do Usuário *</label>
-            <input type="text" id="usuario" required>
-            <label>Telefone *</label>
-            <input type="tel" id="telefone" oninput="maskTel(this)" required>
+            <label>Nome do Usuário *</label><input type="text" id="cliente" required>
+            <label>Telefone *</label><input type="tel" id="telefone" oninput="maskTel(this)" required>
 
-            <label>Algum Dano?</label>
+            <label>Algum Dano constatado?</label>
             <select id="dano" onchange="document.getElementById('campoObs').style.display=(this.value=='Sim'?'block':'none')">
                 <option value="Não">Não</option>
                 <option value="Sim">Sim</option>
             </select>
 
             <div id="campoObs" style="display:none; background: #fff1f1; padding: 15px; border-radius: 8px; border: 1px solid #ffcccc; margin-top: 10px;">
-                <label>Descreva o dano *</label>
+                <label style="margin-top:0; color: #d32f2f;">Descreva o dano *</label>
                 <textarea id="desc" rows="3"></textarea>
+                <label style="color: #d32f2f;">Foto da Avaria *</label>
+                <div class="photo-item" id="itemDano" style="background: white;">
+                    <input type="file" id="inputFotoDano" accept="image/*" capture="camera" onchange="compactarFotoDano(this)">
+                    <img id="previewDano" class="preview-img">
+                </div>
             </div>
 
             <h3>Fotos do veículo</h3>
             <div id="gridFotos">
-                <p style="color: #666; font-size: 12px; text-align: center; border: 1px dashed #ccc; padding: 10px;">Aguardando placa...</p>
+                <p style="color: #666; font-size: 12px; text-align: center; border: 1px dashed #ccc; padding: 10px;">Busque a placa acima.</p>
+            </div>
+
+            <div class="termo-aceite">
+                <strong>TERMO DE RESPONSABILIDADE:</strong> Declaro que as informações prestadas e as fotos anexadas refletem o estado real do veículo. Esta assinatura está
+vinculada aos dados de geolocalização e identificação do dispositivo, servindo como evidência técnica de conformidade. Estou ciente de que a falsificação
+de dados acarretará responsabilidade civil e administrativa, conforme as políticas da FEVER Fleet.
             </div>
 
             <h3>Assinatura *</h3>
@@ -122,19 +145,22 @@
         <h1 style="font-size: 80px; color: #00ffcc; margin: 0;">✔</h1>
         <h2>Sucesso!</h2>
         <button onclick="location.reload()" class="btn-main">NOVO</button>
-        <button onclick="window.close()" class="btn-main btn-secondary">FECHAR EM <span id="timer">10</span>s</button>
+        <button onclick="fecharJanela()" class="btn-main btn-secondary">FECHAR EM <span id="timer">10</span>s</button>
     </div>
 </div>
 
 <script>
     let userLoc = "Não capturado"; let pad; const canvas = document.getElementById('signature-pad'); 
-    const fotos = {}; let placaAtiva = ""; 
+    const fotos = {}; let placaAtiva = ""; let fotoAvariaBase64 = ""; 
     const PATH_IMG = "./img/";
 
     const mapeamentoPorMarca = {
-        "NEXTEM": { "Foto Frente": "nextem_frente.jpg", "Foto Lateral Direita": "nextem_lat_dir.jpg", "Foto Traseira": "nextem_traseira.jpg", "Foto Lateral Esquerda": "nextem_lat_esq.jpg", "Foto Placa": "nextem_placa.jpg", "Foto Chassi": "nextem_chassi.jpg", "Foto Painel/KM": "nextem_painel.jpg", "Foto Cabine": "nextem_cabine.jpg", "Foto Baú": "nextem_bau.jpg", "Foto Capô": "nextem_capo.jpg", "Foto Pneu DM": "nextem_pneu_dmot.jpg", "Foto Pneu DP": "nextem_pneu_dpass.jpg", "Foto Pneu TM": "nextem_pneu_tmot.jpg", "Foto Pneu TP": "nextem_pneu_tpass.jpg", "Foto Recarga": "nextem_recarga_p.jpg", "Foto Reparador": "nextem_reparador.jpg" },
-        "RAP": { "Foto Frente": "rap_frente.jpg", "Foto Lateral Direita": "rap_lat_dir.jpg", "Foto Traseira": "rap_traseira.jpg", "Foto Lateral Esquerda": "rap_lat_esq.jpg", "Foto Placa": "rap_placa.jpg", "Foto Chassi": "rap_chassi.jpg", "Foto Painel/KM": "rap_painel.jpg", "Foto Banco": "rap_banco.jpg", "Foto Baú": "rap_bau.jpg", "Foto Pneu D": "rap_pneu_d.jpg", "Foto Pneu TD": "rap_pneu_td.jpg", "Foto Pneu TE": "rap_pneu_te.jpg", "Foto Recarga": "rap_recarga.jpg", "Foto Ferramentas": "rap_ferramentas.jpg" }
+        "NEXTEM": { "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg", "Foto Lateral Esquerda": "lat_esq.jpg", "Foto Placa": "placa.jpg", "Foto Chassi": "chassi.jpg", "Foto Painel/KM (LIGADO)": "painel.jpg", "Foto Cabine interna": "cabine.jpg", "Foto Interna do Baú": "bau.jpg", "Foto Capô interna": "capo.jpg", "Foto Roda/Pneu (DIANTEIRO) Motorista": "pneu_dmot.jpg", "Foto Roda/Pneu (DIANTEIRO) Passageiro": "pneu_dpass.jpg", "Foto Roda/Pneu (TRASEIRO) Motorista": "pneu_tmot.jpg", "Foto Roda/Pneu (TRASEIRO) Passageiro": "pneu_tpass.jpg", "Foto Estação de Recarga portatil": "recarga_p.jpg", "Foto Frasco Reparador de Pneu": "reparador.jpg" },
+        "RAP": { "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg", "Foto Lateral Esquerda": "lat_esq.jpg", "Foto Placa": "placa.jpg", "Foto Chassi": "chassi.jpg", "Foto Painel/KM (LIGADO)": "painel.jpg", "Foto Banco (assento)": "banco.jpg", "Foto Interna do Baú": "bau.jpg", "Foto Roda/Pneu (DIANTEIRO)": "pneu_d.jpg", "Foto Roda/Pneu (Traseiro Direito)": "pneu_td.jpg", "Foto Roda/Pneu (Traseiro Esquerdo)": "pneu_te.jpg", "Foto Estação de Recarga": "recarga.jpg", "Foto Kit Ferramentas": "ferramentas.jpg" }
     };
+
+    const fotosNextem = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Cabine interna", "Foto Interna do Baú", "Foto Capô interna", "Foto Roda/Pneu (DIANTEIRO) Motorista", "Foto Roda/Pneu (DIANTEIRO) Passageiro", "Foto Roda/Pneu (TRASEIRO) Motorista", "Foto Roda/Pneu (TRASEIRO) Passageiro", "Foto Estação de Recarga portatil", "Foto Frasco Reparador de Pneu"];
+    const fotosRap = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Banco (assento)", "Foto Interna do Baú", "Foto Roda/Pneu (DIANTEIRO)", "Foto Roda/Pneu (Traseiro Direito)", "Foto Roda/Pneu (Traseiro Esquerdo)", "Foto Estação de Recarga", "Foto Kit Ferramentas"];
 
     async function buscarNoBanco(placa) {
         const pL = placa.toUpperCase().trim().replace(/\s|-/g, "");
@@ -155,34 +181,38 @@
         } catch (e) { msg.innerText = "⚠️ Erro de conexão."; }
     }
 
-    function resetarCamposSeErro() {
-        document.getElementById('placa').value = "";
+    function resetarBuscaPlaca() {
         placaAtiva = "";
-        ['chassi', 'modeloVeiculo', 'empresa', 'cnpj', 'km', 'usuario', 'telefone', 'desc'].forEach(id => {
-            const el = document.getElementById(id); if(el) el.value = "";
-        });
+        document.getElementById('chassi').value = "";
+        document.getElementById('modeloVeiculo').value = "";
+        document.getElementById('empresa').value = "";
+        document.getElementById('cnpj').value = "";
         document.getElementById('msg-busca').style.display = "none";
-        document.getElementById('gridFotos').innerHTML = '<p style="color: #666; font-size: 12px; text-align: center; border: 1px dashed #ccc; padding: 10px;">Aguardando placa...</p>';
+        document.getElementById('gridFotos').innerHTML = '<p style="color: #666; font-size: 12px; text-align: center; border: 1px dashed #ccc; padding: 10px;">Busque a placa acima.</p>';
     }
 
     function gerarCamposFotos() {
         const modFull = document.getElementById('modeloVeiculo').value.toUpperCase();
         const grid = document.getElementById('gridFotos'); grid.innerHTML = "";
         let marca = modFull.includes("NEXTEM") ? "NEXTEM" : "RAP";
-        let etiquetas = Object.keys(mapeamentoPorMarca[marca]);
+        let prefixo = marca.toLowerCase() + "_";
+        let listaEtiquetas = (marca === "NEXTEM") ? fotosNextem : fotosRap;
         
-        etiquetas.forEach((label, i) => {
-            const id = i + 1;
-            const imgRef = PATH_IMG + (marca.toLowerCase() + "_") + mapeamentoPorMarca[marca][label];
+        listaEtiquetas.forEach((label, i) => {
+            const nomeArquivo = mapeamentoPorMarca[marca][label] || "";
+            const caminhoRef = nomeArquivo ? PATH_IMG + prefixo + nomeArquivo : "";
             grid.innerHTML += `
-                <div class="photo-item">
-                    <strong>${label} *</strong>
-                    <div class="ref-container" onclick="document.getElementById('file-${id}').click()">
-                        <img src="${imgRef}" class="ref-img" onerror="this.parentElement.style.display='none'">
-                    </div>
-                    <input type="file" id="file-${id}" accept="image/*" capture="camera" onchange="compactar(this, ${id})" required>
-                    <img id="v${id}" class="preview-img" onclick="document.getElementById('file-${id}').click()">
-                </div>`;
+            <div class="photo-item" id="container-${i+1}">
+            <strong style="display:block; margin-bottom:10px;">${label} *</strong>
+            <div class="ref-container" id="ref-${i+1}">
+            <img src="${caminhoRef}" class="ref-img" 
+                 onerror="this.parentElement.style.display='none'" 
+                 onclick="document.getElementById('file-${i+1}').click()">
+             </div>
+            <input type="file" id="file-${i+1}" accept="image/*" capture="camera" onchange="compactar(this, ${i+1})" required>
+            <img id="v${i+1}" class="preview-img" onclick="document.getElementById('file-${i+1}').click()">
+            <p id="hint-${i+1}" style="display:none; font-size:13px; color:gray; margin-top:5px;">Toque na foto para refazer</p>
+            </div>`;
         });
     }
 
@@ -190,48 +220,83 @@
         if (!input.files[0]) return;
         const reader = new FileReader();
         reader.onload = (e) => {
-            const img = new Image(); img.onload = () => {
-                const cv = document.createElement('canvas'); const max = 800;
-                let w = img.width, h = img.height;
-                if (w > max) { h *= max/w; w = max; }
-                cv.width = w; cv.height = h;
+            const img = new Image();
+            img.onload = () => {
+                const cv = document.createElement('canvas'); const max = 800; let w = img.width, h = img.height;
+                if (w > max) { h *= max / w; w = max; } cv.width = w; cv.height = h;
                 cv.getContext('2d').drawImage(img, 0, 0, w, h);
                 const base64 = cv.toDataURL('image/jpeg', 0.6);
                 fotos['foto'+id] = base64;
-                const prev = document.getElementById('v'+id);
-                prev.src = base64; prev.style.display = 'block';
+                
+                document.getElementById('ref-'+id).style.display = 'none';
+                document.getElementById('file-'+id).style.display = 'none';
+                document.getElementById('hint-'+id).style.display = 'block';
+                const preview = document.getElementById('v'+id);
+                preview.src = base64; preview.style.display = 'block';
+            };
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+
+    function resetarFoto(id) {
+        if(confirm("Deseja tirar essa foto novamente?")) {
+            document.getElementById('ref-'+id).style.display = 'block';
+            document.getElementById('file-'+id).style.display = 'block';
+            document.getElementById('v'+id).style.display = 'none';
+            document.getElementById('hint-'+id).style.display = 'none';
+            delete fotos['foto'+id];
+        }
+    }
+
+    function compactarFotoDano(input) {
+        if (!input.files[0]) return;
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image(); img.onload = () => {
+                const cv = document.createElement('canvas'); const max = 800; let w = img.width, h = img.height;
+                if (w > max) { h *= max / w; w = max; } cv.width = w; cv.height = h;
+                cv.getContext('2d').drawImage(img, 0, 0, w, h);
+                fotoAvariaBase64 = cv.toDataURL('image/jpeg', 0.6);
+                document.getElementById('inputFotoDano').style.display = 'none';
+                const preview = document.getElementById('previewDano');
+                preview.src = fotoAvariaBase64; preview.style.display = 'block';
             }; img.src = e.target.result;
         }; reader.readAsDataURL(input.files[0]);
     }
 
     function pegarLocalizacao() {
         navigator.geolocation.getCurrentPosition((p) => {
-            userLoc = `Lat: ${p.coords.latitude} Lon: ${p.coords.longitude}`;
+            userLoc = `Lat: ${p.coords.latitude} Lon: ${p.coords.longitude} (Erro: ${p.coords.accuracy.toFixed(1)}m)`;
             document.getElementById('step-gps').style.display = 'none';
             document.getElementById('step-form').style.display = 'block';
             pad = new SignaturePad(canvas); resizeCanvas();
-        }, () => alert("Ative o GPS!"));
-    }
-
-    function iniciarTimer() { 
-        let seg = 10; 
-        const contador = setInterval(() => { 
-            seg--; 
-            document.getElementById('timer').innerText = seg; 
-            if(seg <= 0) { clearInterval(contador); window.close(); }
-        }, 1000); 
+        });
     }
 
     function maskTel(i) { let v = i.value.replace(/\D/g, ""); v = v.replace(/^(\d{2})(\d)/g, "($1) $2"); v = v.replace(/(\d)(\d{4})$/, "$1-$2"); i.value = v; }
     function resizeCanvas() { const ratio = Math.max(window.devicePixelRatio || 1, 1); canvas.width = canvas.offsetWidth * ratio; canvas.height = canvas.offsetHeight * ratio; canvas.getContext("2d").scale(ratio, ratio); }
 
+    function fecharJanela() { window.close(); }
+    function iniciarTimer() { 
+        let seg = 10; 
+        const contador = setInterval(() => { 
+            seg--; 
+            if(document.getElementById('timer')) document.getElementById('timer').innerText = seg; 
+            if(seg<=0) {
+                clearInterval(contador);
+                fecharJanela();
+            }
+        }, 1000); 
+    }
+
     document.getElementById("formFever").onsubmit = async (e) => {
         e.preventDefault(); 
         if(placaAtiva === "" || pad.isEmpty()) return alert("Preencha tudo e assine!");
         document.getElementById("loading").style.display = "flex";
-        const payload = { ...fotos, placa: placaAtiva, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cnpj: document.getElementById("cnpj").value, usuario: document.getElementById("usuario").value, telefone: document.getElementById("telefone").value, dano: document.getElementById("dano").value, desc: document.getElementById("desc").value || "", assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
+        const payload = { ...fotos, fotoDano: fotoAvariaBase64, placa: placaAtiva, chassi: document.getElementById("chassi").value, modelo: document.getElementById("modeloVeiculo").value, km: document.getElementById("km").value, empresa: document.getElementById("empresa").value, cnpj: document.getElementById("cnpj").value, cliente: document.getElementById("cliente").value, telefone: document.getElementById("telefone").value, dano: document.getElementById("dano").value, desc: document.getElementById("desc").value || "", assinatura: pad.toDataURL(), localizacao: userLoc, timestamp: new Date().toLocaleString("pt-BR") };
         try {
-            await fetch("https://script.google.com/macros/s/AKfycbwSlKIoGQVEjo-B4PF_Br5DanXf_altuPNAuXdyinAi6rfBFmL-okSGfcJDpAaVFbw/exec", { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
+            await fetch("https://script.google.com/macros/s/AKfycbx2JAPlWyvesmbcfcjARhoHz0m4mFBIk9tEnwc716Q3iSlw5IR-H2fcpyIQLBAFKZ1Oqg/exec", { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             document.getElementById("loading").style.display = "none"; 
             document.getElementById("step-form").style.display = "none"; 
             document.getElementById("success-screen").style.display = "block";
