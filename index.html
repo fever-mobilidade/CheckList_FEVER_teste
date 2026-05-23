@@ -331,7 +331,7 @@
         };
 
         try {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbx6b_VFEleHd18yQNUMPNP0Mrtd4tWQzZeb98lKPqIl2nbIMl7AUS2lHV1HLb708GEcig/exec";
+            const scriptURL = "https://script.google.com/macros/s/AKfycbxY7IdlSYRHxyAyE7O9b3mTcuCxWkq9mv3_jjgZADPFIvtH2fHH0ZnCJbCl0VlHxP8GvQ/exec";
             await fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             
             document.getElementById("loading").style.display = "none";
