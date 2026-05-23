@@ -184,7 +184,7 @@
 
     async function buscarNoBanco(placa) {
         const pL = placa.toUpperCase().trim().replace(/\s|-/g, "");
-        if(pL.length < 8) return alert("Digite a placa completa.");
+        if(pL.length < 7) return alert("Digite a placa completa.");
         const msg = document.getElementById('msg-busca');
         msg.innerText = "🔍 Buscando..."; msg.style.display = "block"; msg.style.color = "blue";
         const url = `https://docs.google.com/spreadsheets/d/e/2PACX-1vRKYiYPdmLaEyTMG_lGfXzrZKA4zIn3e3UyynAP1_9GdMy9En-2dEmum6ubX5kLZcTa_E_kQn2aSXtH/pub?gid=128063943&single=true&output=csv`;
