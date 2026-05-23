@@ -87,10 +87,10 @@
 
             <label>Chassi</label><input type="text" id="chassi" readonly>
             <label>Modelo</label><input type="text" id="modeloVeiculo" readonly>
-            <label>KM Atual *</label><input type="number" id="km" required maxlength="8">
+            <label>KM Atual *</label><input type="number" id="km" required oninput="if(this.value.length > 8) this.value = this.value.slice(0, 8);">
             <label>Cliente</label><input type="text" id="empresa" readonly>
             <label>CNPJ</label><input type="text" id="cnpj" readonly>
-            <label>Nome do Usuário *</label><input type="text" id="usuario" required maxlength="50">
+            <label>Nome do Usuário *</label><input type="text" id="usuario" maxlength="50" required>
             <label>Telefone *</label><input type="tel" id="telefone" oninput="maskTel(this)" required maxlength="15">
             <label>Data *</label><input type="date" id="dataRecebimento" required>
 
