@@ -112,7 +112,7 @@
             </div>
 
             <div class="termo-aceite">
-                <strong>TERMO DE RESPONSABILIDADE:</strong> Declaro que as informações acima refletem o estado real do veículo. Esta assinatura eletrônica está vinculada aos dados de geolocalização e identificação do dispositivo móvel abaixo descritos, servindo como evidência técnica de conformidade.
+                <strong>TERMO DE RESPONSABILIDADE:</strong> Declaro que as informações deste relatório refletem o estado real do veículo na data da vistoria. Este documento comprova a realização da vistoria física e o recebimento do veículo nas condições aqui descritas. A assinatura eletrônica está vinculada aos dados de identificação do dispositivo móvel e geolocalização registrados no momento da assinatura, servindo como evidência de conformidade do registro.
             </div>
 
             <label>Sua Assinatura *</label>
@@ -330,7 +330,7 @@
         };
 
         try {
-            const scriptURL = "https://script.google.com/macros/s/AKfycbyoVoNBPoCHl5tHtrPqGjE69WjiY_3JKxkbj1gTQna5Yqv69FwLKb9gXY4DiuZAktoJ/exec";
+            const scriptURL = "https://script.google.com/macros/s/AKfycbyd5vMCx6hpPvfpFtWVoM9pB4BlEQXPxq-S6ObH957w04dOqQbEoKwH49ixEtVX_X1Z/exec";
             await fetch(scriptURL, { method: "POST", mode: "no-cors", body: JSON.stringify(payload) });
             
             document.getElementById("loading").style.display = "none";
