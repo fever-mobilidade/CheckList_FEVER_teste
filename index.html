@@ -3,6 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preload" href="./Font/fauna-thin.ttf" as="font" type="font/ttf" crossorigin>
+
     <title>Checklist FEVER Oficial</title>
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <style>
@@ -75,7 +77,7 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label>PLACA OU CHASSI (8 ultimos dígitos) *</label>
+                <label>digite a PLACA OU zero digite o CHASSI (8 ultimos dígitos) *</label>
                 <div class="busca-container">
                     <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onclick="resetarBusca()">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
@@ -141,12 +143,12 @@
     
     // Mapeamento dinâmico de fotos por marca herdado do modelo periódico
     const mapeamentoPorMarca = {
-        "NEXTEM": { "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg", "Foto Lateral Esquerda": "lat_esq.jpg", "Foto Placa": "placa.jpg", "Foto Chassi": "chassi.jpg", "Foto Painel/KM (LIGADO)": "painel.jpg", "Foto Cabine interna": "cabine.jpg", "Foto Interna do Baú": "bau.jpg", "Foto Capô interna": "capo.jpg", "Foto Roda/Pneu (DIANTEIRO) Motorista": "pneu_dmot.jpg", "Foto Roda/Pneu (DIANTEIRO) Passageiro": "pneu_dpass.jpg", "Foto Roda/Pneu (TRASEIRO) Motorista": "pneu_tmot.jpg", "Foto Roda/Pneu (TRASEIRO) Passageiro": "pneu_tpass.jpg", "Foto Estação de Recarga portatil": "recarga_p.jpg", "Foto Frasco Reparador de Pneu": "reparador.jpg" },
-        "RAP": { "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg", "Foto Lateral Esquerda": "lat_esq.jpg", "Foto Placa": "placa.jpg", "Foto Chassi": "chassi.jpg", "Foto Painel/KM (LIGADO)": "painel.jpg", "Foto Banco (assento)": "banco.jpg", "Foto Interna do Baú": "bau.jpg", "Foto Roda/Pneu (DIANTEIRO)": "pneu_d.jpg", "Foto Roda/Pneu (Traseiro Direito)": "pneu_td.jpg", "Foto Roda/Pneu (Traseiro Esquerdo)": "pneu_te.jpg", "Foto Estação de Recarga": "recarga.jpg", "Foto Kit Ferramentas": "ferramentas.jpg" }
+        "NEXTEM": { "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg", "Foto Lateral Esquerda": "lat_esq.jpg", "Foto Placa": "placa.jpg", "Foto Chassi": "chassi.jpg", "Foto Painel/KM (LIGADO)": "painel.jpg", "Foto Cabine interna": "cabine.jpg", "Foto Interna do Baú": "bau.jpg"},
+        "RAP": { "Foto Frente": "frente.jpg", "Foto Lateral Direita": "lat_dir.jpg", "Foto Traseira": "traseira.jpg", "Foto Lateral Esquerda": "lat_esq.jpg", "Foto Placa": "placa.jpg", "Foto Chassi": "chassi.jpg", "Foto Painel/KM (LIGADO)": "painel.jpg", "Foto Banco (assento)": "banco.jpg", "Foto Interna do Baú": "bau.jpg"}
     };
 
-    const fotosNextem = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Cabine interna", "Foto Interna do Baú", "Foto Capô interna", "Foto Roda/Pneu (DIANTEIRO) Motorista", "Foto Roda/Pneu (DIANTEIRO) Passageiro", "Foto Roda/Pneu (TRASEIRO) Motorista", "Foto Roda/Pneu (TRASEIRO) Passageiro", "Foto Estação de Recarga portatil", "Foto Frasco Reparador de Pneu"];
-    const fotosRap = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Banco (assento)", "Foto Interna do Baú", "Foto Roda/Pneu (DIANTEIRO)", "Foto Roda/Pneu (Traseiro Direito)", "Foto Roda/Pneu (Traseiro Esquerdo)", "Foto Estação de Recarga", "Foto Kit Ferramentas"];
+    const fotosNextem = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Cabine interna", "Foto Interna do Baú"];
+    const fotosRap = ["Foto Frente", "Foto Lateral Direita", "Foto Traseira", "Foto Lateral Esquerda", "Foto Placa", "Foto Chassi", "Foto Painel/KM (LIGADO)", "Foto Banco (assento)", "Foto Interna do Baú"];
 
     // Gerar Tabela Dinamicamente
     itens.forEach(it => { 
@@ -246,7 +248,7 @@
             const img = new Image();
             img.onload = () => {
                 const cv = document.createElement('canvas');
-                const max = 1000; let w = img.width, h = img.height;
+                const max = 800; let w = img.width, h = img.height;
                 if (w > max) { h *= max / w; w = max; }
                 cv.width = w; cv.height = h;
                 cv.getContext('2d').drawImage(img, 0, 0, w, h);
