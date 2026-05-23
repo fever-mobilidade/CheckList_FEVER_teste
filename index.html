@@ -77,7 +77,7 @@
     <div id="step-form">
         <form id="formFever">
             <div class="placa-container">
-                <label>digite a PLACA OU zero digite o CHASSI (8 ultimos dígitos) *</label>
+                <label>PLACA ou ZERO digite o CHASSI (8 ultimos dígitos) *</label>
                 <div class="busca-container">
                     <input type="text" id="placa" class="placa-input" required maxlength="8" placeholder="Ex:ABC1D23" oninput="this.value = this.value.toUpperCase()" onclick="resetarBusca()">
                     <button type="button" class="btn-busca" onclick="buscarNoBanco(document.getElementById('placa').value)">BUSCAR</button>
@@ -87,14 +87,14 @@
 
             <label>Chassi</label><input type="text" id="chassi" readonly>
             <label>Modelo</label><input type="text" id="modeloVeiculo" readonly>
-            <label>KM Atual *</label><input type="number" id="km" required>
+            <label>KM Atual *</label><input type="number" id="km" required maxlength="8">
             <label>Cliente</label><input type="text" id="empresa" readonly>
             <label>CNPJ</label><input type="text" id="cnpj" readonly>
-            <label>Nome do Usuário *</label><input type="text" id="usuario" required>
-            <label>Telefone *</label><input type="tel" id="telefone" oninput="maskTel(this)" required>
+            <label>Nome do Usuário *</label><input type="text" id="usuario" maxlength="50" required>
+            <label>Telefone *</label><input type="tel" id="telefone" oninput="maskTel(this)" required maxlength="15">
             <label>Data *</label><input type="date" id="dataRecebimento" required>
 
-            <h3>Condições do Veículo</h3>
+            <h3>Condições do Veículo *</h3>
             <table class="check-table">
                 <thead><tr><th style="text-align:left">Item</th><th>Ok</th><th>Não Ok</th><th>N/A</th></tr></thead>
                 <tbody id="corpoTabela"></tbody>
@@ -107,7 +107,7 @@
             <div id="campoObs" style="display:none; margin-bottom: 20px;"><textarea id="desc" rows="3" placeholder="Descreva o dano detalhadamente..."></textarea></div>
 
             <div id="secaoFotos">
-                <h3>Fotos Obrigatórias</h3>
+                <h3>Fotos Obrigatórias *</h3>
                 <div id="gridFotos"></div>
             </div>
 
